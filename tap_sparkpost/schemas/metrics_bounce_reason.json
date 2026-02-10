@@ -26,6 +26,18 @@
         "string"
       ]
     },
+    "bounce_category_id": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "bounce_category_name": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
     "count_targeted": {
       "type": [
         "null",
