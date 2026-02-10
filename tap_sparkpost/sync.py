@@ -1,21 +1,22 @@
 """Sync mode for SparkPost tap."""
-from typing import Dict, Optional
+from typing import Dict
 
 import singer
 from tap_sparkpost.streams import STREAMS
 from tap_sparkpost.client import Client
+from tap_sparkpost.exceptions import SparkPostForbiddenError, SparkPostBadRequestError
 
 LOGGER = singer.get_logger()
 
 
-def update_currently_syncing(state: Dict, stream_name: Optional[str]) -> None:
+def update_currently_syncing(state: Dict, stream_name: str) -> None:
     """
     Update currently_syncing in state and write it
     """
-    if stream_name:
-        singer.set_currently_syncing(state, stream_name)
+    if not stream_name and singer.get_currently_syncing(state):
+        del state["currently_syncing"]
     else:
-        state.pop("currently_syncing", None)
+        singer.set_currently_syncing(state, stream_name)
     singer.write_state(state)
 
 
@@ -59,7 +60,17 @@ def sync(client: Client, _config: Dict, catalog: singer.Catalog, state) -> None:
             write_schema(stream, client, streams_to_sync, catalog)
             LOGGER.info("START Syncing: %s", stream_name)
             update_currently_syncing(state, stream_name)
-            total_records = stream.sync(state=state, transformer=transformer)
+
+            try:
+                total_records = stream.sync(state=state, transformer=transformer)
+            except (SparkPostForbiddenError, SparkPostBadRequestError) as error:
+                LOGGER.warning(
+                    "Skipping stream %s: %s",
+                    stream_name,
+                    str(error)
+                )
+                update_currently_syncing(state, None)
+                continue
 
             update_currently_syncing(state, None)
             LOGGER.info(
