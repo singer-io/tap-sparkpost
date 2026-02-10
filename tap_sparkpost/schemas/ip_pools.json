@@ -28,7 +28,7 @@
         "array"
       ],
       "items": {
-        "type": "object",
+        "type": ["null", "object"],
         "properties": {
           "external_ip": {
             "type": [

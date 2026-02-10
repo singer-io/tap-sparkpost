@@ -1,6 +1,10 @@
 {
   "type": "object",
   "properties": {
+    "ts": {
+      "type": ["null", "string"],
+      "format": "date-time"
+    },
     "sending_ip": {
       "type": "string"
     },

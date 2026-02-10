@@ -34,7 +34,7 @@
         "array"
       ],
       "items": {
-        "type": "object",
+        "type": ["null", "object"],
         "properties": {
           "address": {
             "type": [
@@ -75,7 +75,7 @@
               "array"
             ],
             "items": {
-              "type": "string"
+              "type": ["null", "string"]
             }
           },
           "metadata": {
