@@ -72,11 +72,19 @@ def get_schemas() -> Tuple[Dict, Dict]:
         #   - inclusion: "available" at stream level
         #   - inclusion: "automatic" for key_properties fields
         # We add selected and mark replication key fields as automatic
+        # EXCEPTION: For metrics streams, the 'ts' replication key should remain "available"
+        # to allow users to select/deselect it, as metrics endpoints don't require it in output
         mdata = metadata.write(mdata, (), "selected", True)
 
         replication_keys = getattr(stream_obj, "replication_keys") or []
+        is_metrics_stream = stream_name.startswith("metrics_")
+        
         for field_name in schema.get("properties", {}).keys():
             if field_name in replication_keys:
+                # For metrics streams, keep 'ts' as available instead of automatic
+                if is_metrics_stream and field_name == "ts":
+                    # ts is already set to "available" by get_standard_metadata, so skip
+                    continue
                 mdata = metadata.write(
                     mdata, ("properties", field_name), "inclusion", "automatic"
                 )
