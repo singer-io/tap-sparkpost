@@ -1,0 +1,27 @@
+{
+  "type": "object",
+  "properties": {
+    "attempt": {
+      "type": "integer"
+    },
+    "count_delivered": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "count_delivered_first": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "count_delivered_subsequent": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    }
+  },
+  "additionalProperties": false
+}

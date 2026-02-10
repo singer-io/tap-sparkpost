@@ -1,0 +1,155 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "name": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "description": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "published": {
+      "type": [
+        "null",
+        "boolean"
+      ]
+    },
+    "has_draft": {
+      "type": [
+        "null",
+        "boolean"
+      ]
+    },
+    "has_published": {
+      "type": [
+        "null",
+        "boolean"
+      ]
+    },
+    "last_update_time": {
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
+    },
+    "last_use": {
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
+    },
+    "shared_with_subaccounts": {
+      "type": [
+        "null",
+        "boolean"
+      ]
+    },
+    "content": {
+      "type": [
+        "null",
+        "object"
+      ],
+      "properties": {
+        "html": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "text": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "amp_html": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "from": {
+          "type": [
+            "null",
+            "object"
+          ],
+          "properties": {
+            "email": {
+              "type": [
+                "null",
+                "string"
+              ]
+            },
+            "name": {
+              "type": [
+                "null",
+                "string"
+              ]
+            }
+          }
+        },
+        "subject": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "reply_to": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "headers": {
+          "type": [
+            "null",
+            "object"
+          ]
+        },
+        "email_rfc822": {
+          "type": [
+            "null",
+            "string"
+          ]
+        }
+      }
+    },
+    "options": {
+      "type": [
+        "null",
+        "object"
+      ],
+      "properties": {
+        "open_tracking": {
+          "type": [
+            "null",
+            "boolean"
+          ]
+        },
+        "click_tracking": {
+          "type": [
+            "null",
+            "boolean"
+          ]
+        },
+        "transactional": {
+          "type": [
+            "null",
+            "boolean"
+          ]
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

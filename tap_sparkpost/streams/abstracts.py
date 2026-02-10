@@ -104,7 +104,7 @@ class BaseStream(ABC):
 
         Uses cursor-based pagination as per SparkPost API documentation:
         - Start with cursor=initial for first page
-        - Use links.next from response for subsequent pages
+        - Use links array from response for subsequent pages
         - per_page parameter controls page size (max 10,000)
         """
         self.params["per_page"] = self.page_size
@@ -124,9 +124,16 @@ class BaseStream(ABC):
             # Yield records
             yield from raw_records
 
-            # Check for next page in links object
-            links = response.get(self.next_page_key, {})
-            next_url = links.get("next")
+            # Check for next page in links array
+            links = response.get(self.next_page_key, [])
+            next_url = None
+
+            # links is an array of objects with rel and href properties
+            if isinstance(links, list):
+                for link in links:
+                    if link.get("rel") == "next":
+                        next_url = link.get("href")
+                        break
 
             if not next_url:
                 break
@@ -219,7 +226,7 @@ class IncrementalStream(BaseStream):
         current_max_bookmark_date = bookmark_date
         # SparkPost API uses 'from' and 'to' parameters for date filtering
         # Format: YYYY-MM-DDTHH:MM:ssZ (UTC)
-        self.update_params(**{"from": bookmark_date})
+        self.update_params(from_date=bookmark_date)
         self.update_data_payload(parent_obj=parent_obj)
         self.url_endpoint = self.get_url_endpoint(parent_obj)
 
@@ -314,6 +321,117 @@ class ParentBaseStream(IncrementalStream):
             )
 
         return state
+
+
+# Shared metrics constants for subclasses to avoid duplicate-code
+BOUNCE_METRICS = [
+    "count_bounce",
+    "count_inband_bounce",
+    "count_outofband_bounce",
+    "count_admin_bounce",
+]
+
+
+class MetricsBaseStream(IncrementalStream):
+    """Base class for metrics streams with date-based incremental syncing.
+
+    All SparkPost metrics endpoints require date parameters:
+    - from: Required datetime parameter (YYYY-MM-DDTHH:MM)
+    - to: Optional datetime parameter (defaults to now)
+    - metrics: Required list of metrics to return
+
+    Uses start_date from config for initial sync, then bookmarks last sync date.
+    """
+
+    replication_keys = ["ts"]  # time-series timestamp field
+    replication_method = "INCREMENTAL"
+
+    # Default metrics to fetch - can be overridden by subclasses
+    default_metrics = ["count_targeted", "count_sent", "count_delivered"]
+
+    def get_records(self) -> Iterator:
+        """Fetch metrics records with date range parameters."""
+        # SparkPost metrics API doesn't use pagination
+        # It returns all results for the date range specified
+        response = self.client.make_request(
+            self.http_method,
+            self.url_endpoint,
+            self.params,
+            self.headers,
+            body=json.dumps(self.data_payload) if self.data_payload else None,
+            path=self.path
+        )
+
+        raw_records = response.get(self.data_key, [])
+        yield from raw_records
+
+    def sync(
+        self,
+        state: Dict,
+        transformer: Transformer,
+        parent_obj: Dict = None,
+    ) -> Dict:
+        """Implementation for metrics incremental stream with date parameters."""
+        from datetime import datetime, timezone  # pylint: disable=import-outside-toplevel
+
+        bookmark_date = self.get_bookmark(state, self.tap_stream_id)
+        current_max_bookmark_date = bookmark_date
+
+        # SparkPost API uses 'from' and 'to' parameters for date filtering
+        # Format: YYYY-MM-DDTHH:MM
+        self.update_params(
+            **{
+                "from": bookmark_date,
+                "metrics": ",".join(self.default_metrics)
+            }
+        )
+
+        self.update_data_payload(parent_obj=parent_obj)
+        self.url_endpoint = self.get_url_endpoint(parent_obj)
+
+        with metrics.record_counter(self.tap_stream_id) as counter:
+            for record in self.get_records():
+                record = self.modify_object(record, parent_obj)
+                transformed_record = transformer.transform(
+                    record, self.schema, self.metadata
+                )
+
+                # Use 'ts' field for time-series metrics, or fallback to bookmark
+                record_bookmark = transformed_record.get(self.replication_keys[0], bookmark_date)
+                if record_bookmark >= bookmark_date:
+                    if self.is_selected():
+                        write_record(self.tap_stream_id, transformed_record)
+                        counter.increment()
+
+                    current_max_bookmark_date = max(
+                        current_max_bookmark_date, record_bookmark
+                    )
+
+                    for child in self.child_to_sync:
+                        child.sync(state=state, transformer=transformer, parent_obj=record)
+
+            # Update bookmark to now() to ensure we don't miss data
+            current_max_bookmark_date = max(
+                current_max_bookmark_date,
+                datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M")
+            )
+            state = self.write_bookmark(state, self.tap_stream_id, value=current_max_bookmark_date)
+            return counter.value
+
+
+class EmptyStream(FullTableStream):
+    """Base class for streams that are unavailable or unsupported.
+
+    Returns empty data to allow tap to continue processing other streams.
+    Use for endpoints that:
+    - Don't exist in the API version
+    - Require parameters not available in free tier
+    - Are write-only (e.g., transmissions)
+    """
+
+    def get_records(self):
+        """Return empty generator for unavailable endpoint."""
+        return []
 
 
 class ChildBaseStream(IncrementalStream):

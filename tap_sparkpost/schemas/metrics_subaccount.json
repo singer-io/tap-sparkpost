@@ -1,0 +1,183 @@
+{
+  "type": "object",
+  "properties": {
+    "subaccount_id": {
+      "type": "integer"
+    },
+    "count_targeted": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "count_injected": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "count_rejected": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "count_sent": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "count_delivered": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "count_delivered_first": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "count_delivered_subsequent": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "total_delivery_time_first": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "total_delivery_time_subsequent": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "total_msg_volume": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "count_bounce": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "count_hard_bounce": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "count_soft_bounce": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "count_block_bounce": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "count_admin_bounce": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "count_undetermined_bounce": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "count_delayed": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "count_delayed_first": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "count_rendered": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "count_unique_rendered": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "count_unique_confirmed_opened": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "count_clicked": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "count_unique_clicked": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "count_policy_rejection": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "count_generation_rejection": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "count_generation_failed": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "count_inband_bounce": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "count_outofband_bounce": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "count_spam_complaint": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    }
+  },
+  "additionalProperties": false
+}

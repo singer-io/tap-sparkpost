@@ -1,0 +1,98 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "name": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "description": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "attributes": {
+      "type": [
+        "null",
+        "object"
+      ]
+    },
+    "total_accepted_recipients": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "recipients": {
+      "type": [
+        "null",
+        "array"
+      ],
+      "items": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "type": [
+              "null",
+              "object",
+              "string"
+            ],
+            "properties": {
+              "email": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "name": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "header_to": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              }
+            }
+          },
+          "return_path": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "tags": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "metadata": {
+            "type": [
+              "null",
+              "object"
+            ]
+          },
+          "substitution_data": {
+            "type": [
+              "null",
+              "object"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

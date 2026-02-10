@@ -1,0 +1,327 @@
+{
+  "type": "object",
+  "properties": {
+    "amp_enabled": {
+      "type": [
+        "null",
+        "boolean"
+      ]
+    },
+    "bounce_class": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "campaign_id": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "click_tracking": {
+      "type": [
+        "null",
+        "boolean"
+      ]
+    },
+    "customer_id": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "delv_method": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "device_token": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "error_code": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "event_id": {
+      "type": "string"
+    },
+    "friendly_from": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "initial_pixel": {
+      "type": [
+        "null",
+        "boolean"
+      ]
+    },
+    "injection_time": {
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
+    },
+    "ip_address": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "ip_pool": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "mailbox_provider": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "mailbox_provider_region": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "message_id": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "msg_from": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "msg_size": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "num_retries": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "open_tracking": {
+      "type": [
+        "null",
+        "boolean"
+      ]
+    },
+    "rcpt_meta": {
+      "type": [
+        "null",
+        "object"
+      ]
+    },
+    "rcpt_tags": {
+      "type": [
+        "null",
+        "array"
+      ],
+      "items": {
+        "type": "string"
+      }
+    },
+    "rcpt_to": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "rcpt_hash": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "raw_rcpt_to": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "rcpt_type": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "raw_reason": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "reason": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "recipient_domain": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "recv_method": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "routing_domain": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "scheduled_time": {
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
+    },
+    "sending_domain": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "sending_ip": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "sms_coding": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "sms_dst": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "sms_dst_npi": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "sms_dst_ton": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "sms_remoteids": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "sms_segments": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "sms_src": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "sms_src_npi": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "sms_src_ton": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "sms_text": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "subaccount_id": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "subject": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "template_id": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "template_version": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "timestamp": {
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
+    },
+    "transactional": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "transmission_id": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "type": {
+      "type": [
+        "null",
+        "string"
+      ]
+    }
+  },
+  "additionalProperties": false
+}

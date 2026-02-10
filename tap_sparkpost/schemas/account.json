@@ -1,0 +1,247 @@
+{
+  "type": "object",
+  "properties": {
+    "customer_id": {
+      "type": "integer"
+    },
+    "company_name": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "country_code": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "anniversary_date": {
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
+    },
+    "created": {
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
+    },
+    "updated": {
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
+    },
+    "status": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "status_updated": {
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
+    },
+    "status_reason_category": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "tfa_required": {
+      "type": [
+        "null",
+        "boolean"
+      ]
+    },
+    "service_level": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "subscription": {
+      "type": [
+        "null",
+        "object"
+      ],
+      "properties": {
+        "name": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "code": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "plan_volume": {
+          "type": [
+            "null",
+            "integer"
+          ]
+        },
+        "effective_date": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "format": "date-time"
+        },
+        "self_serve": {
+          "type": [
+            "null",
+            "boolean"
+          ]
+        },
+        "type": {
+          "type": [
+            "null",
+            "string"
+          ]
+        }
+      }
+    },
+    "options": {
+      "type": [
+        "null",
+        "object"
+      ],
+      "properties": {
+        "smtp_tracking_default": {
+          "type": [
+            "null",
+            "boolean"
+          ]
+        }
+      }
+    },
+    "usage": {
+      "type": [
+        "null",
+        "object"
+      ],
+      "properties": {
+        "timestamp": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "format": "date-time"
+        },
+        "day": {
+          "type": [
+            "null",
+            "object"
+          ],
+          "properties": {
+            "used": {
+              "type": [
+                "null",
+                "integer"
+              ]
+            },
+            "limit": {
+              "type": [
+                "null",
+                "integer"
+              ]
+            },
+            "start": {
+              "type": [
+                "null",
+                "string"
+              ],
+              "format": "date-time"
+            },
+            "end": {
+              "type": [
+                "null",
+                "string"
+              ],
+              "format": "date-time"
+            }
+          }
+        },
+        "month": {
+          "type": [
+            "null",
+            "object"
+          ],
+          "properties": {
+            "used": {
+              "type": [
+                "null",
+                "integer"
+              ]
+            },
+            "limit": {
+              "type": [
+                "null",
+                "integer"
+              ]
+            },
+            "start": {
+              "type": [
+                "null",
+                "string"
+              ],
+              "format": "date-time"
+            },
+            "end": {
+              "type": [
+                "null",
+                "string"
+              ],
+              "format": "date-time"
+            }
+          }
+        }
+      }
+    },
+    "support": {
+      "type": [
+        "null",
+        "object"
+      ],
+      "properties": {
+        "phone": {
+          "type": [
+            "null",
+            "boolean"
+          ]
+        },
+        "online": {
+          "type": [
+            "null",
+            "boolean"
+          ]
+        }
+      }
+    },
+    "pending_subscription": {
+      "type": [
+        "null",
+        "object"
+      ]
+    },
+    "pending_cancellation": {
+      "type": [
+        "null",
+        "object"
+      ]
+    }
+  },
+  "additionalProperties": false
+}

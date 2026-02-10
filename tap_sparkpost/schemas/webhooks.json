@@ -1,0 +1,136 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "name": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "target": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "events": {
+      "type": [
+        "null",
+        "array"
+      ],
+      "items": {
+        "type": "string"
+      }
+    },
+    "auth_type": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "auth_request_details": {
+      "type": [
+        "null",
+        "object"
+      ]
+    },
+    "auth_credentials": {
+      "type": [
+        "null",
+        "object"
+      ],
+      "properties": {
+        "username": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "password": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "access_token": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "expires_in": {
+          "type": [
+            "null",
+            "integer"
+          ]
+        },
+        "token_type": {
+          "type": [
+            "null",
+            "string"
+          ]
+        }
+      }
+    },
+    "auth_token": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "custom_headers": {
+      "type": [
+        "null",
+        "object"
+      ]
+    },
+    "active": {
+      "type": [
+        "null",
+        "boolean"
+      ]
+    },
+    "links": {
+      "type": [
+        "null",
+        "array"
+      ],
+      "items": {
+        "type": "object"
+      }
+    },
+    "last_successful": {
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
+    },
+    "last_failure": {
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
+    },
+    "exception_subaccounts": {
+      "type": [
+        "null",
+        "array"
+      ],
+      "items": {
+        "type": "integer"
+      }
+    },
+    "shared_with_subaccounts": {
+      "type": [
+        "null",
+        "boolean"
+      ]
+    }
+  },
+  "additionalProperties": false
+}
