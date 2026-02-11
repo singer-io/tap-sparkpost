@@ -4,7 +4,7 @@ from tap_sparkpost.streams.abstracts import MetricsBaseStream
 class MetricsRejectionReason(MetricsBaseStream):
     """Stream for retrieving rejection reason metrics."""
     tap_stream_id = "metrics_rejection_reason"
-    key_properties = ["reason", "rejection_category_id"]
+    key_properties = ["timestamp", "reason", "rejection_category_id"]
     data_key = "results"
     path = "metrics/deliverability/rejection-reason"
 

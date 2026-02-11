@@ -78,12 +78,16 @@ def get_schemas() -> Tuple[Dict, Dict]:
 
         replication_keys = getattr(stream_obj, "replication_keys") or []
         is_metrics_stream = stream_name.startswith("metrics_")
-        
+
         for field_name in schema.get("properties", {}).keys():
             if field_name in replication_keys:
-                # For metrics streams, keep 'ts' as available instead of automatic
-                if is_metrics_stream and field_name == "ts":
-                    # ts is already set to "available" by get_standard_metadata, so skip
+                # For metrics streams, keep 'ts'/'timestamp' as available instead of automatic
+                # get_standard_metadata sets key_properties to automatic, so we need to
+                # explicitly change it back to available for metrics streams
+                if is_metrics_stream and field_name in ("ts", "timestamp"):
+                    mdata = metadata.write(
+                        mdata, ("properties", field_name), "inclusion", "available"
+                    )
                     continue
                 mdata = metadata.write(
                     mdata, ("properties", field_name), "inclusion", "automatic"

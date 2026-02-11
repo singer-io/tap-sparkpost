@@ -14,8 +14,9 @@ class TestSync(unittest.TestCase):
         client = MagicMock()
         catalog = MagicMock()
         catalog.get_stream.return_value = MagicMock()
+        config = {}
 
-        write_schema(mock_stream, client, [], catalog)
+        write_schema(mock_stream, client, [], catalog, config)
 
         mock_stream.write_schema.assert_called_once()
         self.assertEqual(len(mock_stream.child_to_sync), 0)
@@ -30,8 +31,9 @@ class TestSync(unittest.TestCase):
         client = MagicMock()
         catalog = MagicMock()
         catalog.get_stream.return_value = MagicMock()
+        config = {}
 
-        write_schema(mock_stream, client, [], catalog)
+        write_schema(mock_stream, client, [], catalog, config)
 
         self.assertEqual(mock_stream.write_schema.call_count, 0)
         self.assertEqual(len(mock_stream.child_to_sync), 0)

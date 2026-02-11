@@ -4,7 +4,7 @@ from tap_sparkpost.streams.abstracts import MetricsBaseStream
 class MetricsDelayReason(MetricsBaseStream):
     """Stream for retrieving delay reason metrics."""
     tap_stream_id = "metrics_delay_reason"
-    key_properties = ["reason"]
+    key_properties = ["timestamp", "reason"]
     data_key = "results"
     path = "metrics/deliverability/delay-reason"
 
