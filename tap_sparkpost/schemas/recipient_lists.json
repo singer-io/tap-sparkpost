@@ -20,7 +20,8 @@
       "type": [
         "null",
         "object"
-      ]
+      ],
+      "additionalProperties": true
     },
     "total_accepted_recipients": {
       "type": [
@@ -82,13 +83,15 @@
             "type": [
               "null",
               "object"
-            ]
+            ],
+            "additionalProperties": true
           },
           "substitution_data": {
             "type": [
               "null",
               "object"
-            ]
+            ],
+            "additionalProperties": true
           }
         }
       }

@@ -4,7 +4,7 @@ from tap_sparkpost.streams.abstracts import MetricsBaseStream
 class MetricsDeliveriesByAttempt(MetricsBaseStream):
     """Stream for retrieving deliveries by attempt metrics."""
     tap_stream_id = "metrics_deliveries_by_attempt"
-    key_properties = ["attempt"]
+    key_properties = ["timestamp", "attempt"]
     data_key = "results"
     path = "metrics/deliverability/attempt"
 

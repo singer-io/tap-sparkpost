@@ -114,7 +114,8 @@
           "type": [
             "null",
             "object"
-          ]
+          ],
+          "additionalProperties": true
         },
         "email_rfc822": {
           "type": [

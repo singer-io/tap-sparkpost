@@ -129,7 +129,8 @@
       "type": [
         "null",
         "object"
-      ]
+      ],
+      "additionalProperties": true
     },
     "rcpt_tags": {
       "type": [

@@ -23,7 +23,7 @@ from singer import (
 LOGGER = get_logger()
 
 
-class BaseStream(ABC):
+class BaseStream(ABC):  # pylint: disable=too-many-instance-attributes
     """
     A Base Class providing structure and boilerplate for generic streams
     and required attributes for any kind of stream
@@ -45,9 +45,10 @@ class BaseStream(ABC):
     parent_bookmark_key = ""
     http_method = "GET"
 
-    def __init__(self, client=None, catalog=None) -> None:
+    def __init__(self, client=None, catalog=None, config=None) -> None:
         self.client = client
         self.catalog = catalog
+        self.config = config or {}
         self.schema = catalog.schema.to_dict()
         self.metadata = metadata.to_map(catalog.metadata)
         self.child_to_sync = []
@@ -341,20 +342,45 @@ BOUNCE_METRICS = [
 
 class MetricsBaseStream(IncrementalStream):
     """Base class for metrics streams with date-based incremental syncing.
-    
+
     All SparkPost metrics endpoints require date parameters:
     - from: Required datetime parameter (YYYY-MM-DDTHH:MM)
     - to: Optional datetime parameter (defaults to now)
     - metrics: Required list of metrics to return
+    - precision: Optional aggregation precision (day, week, month)
 
     Uses start_date from config for initial sync, then bookmarks last sync date.
+    Aggregation precision is read from config once and cannot change during sync.
     """
 
-    replication_keys = ["ts"]  # time-series timestamp field
+    replication_keys = ["timestamp"]  # time-series timestamp field
     replication_method = "INCREMENTAL"
 
     # Default metrics to fetch - can be overridden by subclasses
     default_metrics = ["count_targeted", "count_sent", "count_delivered"]
+
+    def __init__(self, client=None, catalog=None, config=None) -> None:
+        """Initialize MetricsBaseStream with aggregation precision support.
+
+        Args:
+            client: API client instance
+            catalog: Stream catalog
+            config: Configuration dict containing optional 'precision' parameter
+                   Allowed values: 'day' (default), 'week', 'month'
+        """
+        super().__init__(client, catalog, config)
+        # Get aggregation precision from config, default to 'day'
+        # Precision MUST NOT change during a sync to prevent mixed aggregation records
+        self.precision = self.config.get('precision', 'day')
+
+        # Validate precision value
+        valid_precisions = ['day', 'week', 'month']
+        if self.precision not in valid_precisions:
+            LOGGER.warning(
+                "Invalid precision '%s'. Using default 'day'. Valid values: %s",
+                self.precision, valid_precisions
+            )
+            self.precision = 'day'
 
     def get_records(self) -> Iterator:
         """Fetch metrics records with date range parameters."""
@@ -379,20 +405,20 @@ class MetricsBaseStream(IncrementalStream):
         parent_obj: Dict = None,
     ) -> Dict:
         """Implementation for metrics incremental stream with date parameters.
-        
+
         CHANGE REASON:
         This method was modified to fix bookmark comparison and format issues that caused
         the test_bookmark integration tests to fail. The core issues were:
         1. Records with earlier timestamps were passing the bookmark filter incorrectly
         2. Bookmarks were written with microseconds (.000000Z) but needed to be written without
-        
+
         ORIGINAL ISSUES:
         - String comparison "2026-02-08T17:30:00.000000Z" >= "2026-02-08T18:30:00Z" would fail
           due to microseconds being present in the record timestamp
         - When comparing timestamps as strings, "17:30" would appear less than "18:30" only if
           formats matched exactly, but microseconds disrupted this
         - Bookmarks written with .000000Z format but tests expected clean format without microseconds
-        
+
         EXAMPLE FAILURE SCENARIO:
         Before fix:
           - Bookmark: "2026-02-08T18:30:00Z"
@@ -400,38 +426,38 @@ class MetricsBaseStream(IncrementalStream):
           - Comparison: "2026-02-08T17:30:00.000000Z" >= "2026-02-08T18:30:00Z"
           - Result: PASS (incorrectly) because string comparison with .000000Z
           - Expected: FAIL (record is before bookmark)
-        
+
         After fix:
           - Bookmark: "2026-02-08T18:30:00Z"
           - Record timestamp normalized: "2026-02-08T17:30:00Z" (removed .000000Z)
           - Comparison: "2026-02-08T17:30:00Z" >= "2026-02-08T18:30:00Z"
           - Result: FAIL (correctly filters out old record)
           - Expected: FAIL ✓
-        
+
         SOLUTION:
         1. Ensure record_bookmark is always a string type before comparison
         2. Normalize timestamp format by removing microseconds (.000000Z -> Z)
         3. Perform string comparison with normalized timestamps
         4. When writing bookmarks, parse and reformat to remove microseconds
-        
+
         IMPLEMENTATION DETAILS:
         - String type checking: isinstance(record_bookmark, str)
         - Microsecond normalization: .replace(".000000Z", "Z")
-        - Bookmark formatting: datetime.strptime/strftime to ensure clean format
+        - Bookmark formatting: datetime.strptime/strftime
         - Handles both formats: "%Y-%m-%dT%H:%M:%S.%fZ" and "%Y-%m-%dT%H:%M:%SZ"
         """
-        from datetime import datetime, timezone  # pylint: disable=import-outside-toplevel
-
         bookmark_date = self.get_bookmark(state, self.tap_stream_id)
         current_max_bookmark_date = bookmark_date
 
         # SparkPost API uses 'from' and 'to' parameters for date filtering
         # Format: YYYY-MM-DDTHH:MM:SSZ (UTC)
-        # Note: API may return hourly aggregated data, so we rely on record-level filtering
+        # precision parameter controls aggregation level (day, week, month)
+        # Note: API may return aggregated data based on precision setting
         self.update_params(
             **{
                 "from": bookmark_date,
-                "metrics": ",".join(self.default_metrics)
+                "metrics": ",".join(self.default_metrics),
+                "precision": self.precision
             }
         )
 
@@ -445,15 +471,15 @@ class MetricsBaseStream(IncrementalStream):
                     record, self.schema, self.metadata
                 )
 
-                # Use 'ts' field for time-series metrics, or fallback to bookmark
+                # Use 'timestamp' field for time-series metrics, or fallback to bookmark
                 record_bookmark = transformed_record.get(self.replication_keys[0], bookmark_date)
-                
+
                 # FIX: Ensure record_bookmark is a string for comparison
                 # Some API responses may return timestamps as datetime objects or other types
                 # Converting to string ensures consistent comparison with bookmark_date (always string)
                 if not isinstance(record_bookmark, str):
                     record_bookmark = str(record_bookmark)
-                
+
                 # FIX: Normalize format by removing microseconds for consistent comparison
                 # SparkPost API may return timestamps with microseconds: "2026-02-08T17:30:00.000000Z"
                 # But we want to compare against bookmarks without microseconds: "2026-02-08T17:30:00Z"
@@ -461,7 +487,7 @@ class MetricsBaseStream(IncrementalStream):
                 #   - Before: "2026-02-08T17:30:00.000000Z" >= "2026-02-08T18:30:00Z" (incorrect result)
                 #   - After:  "2026-02-08T17:30:00Z" >= "2026-02-08T18:30:00Z" (correct result)
                 record_bookmark_normalized = record_bookmark.replace(".000000Z", "Z")
-                
+
                 if record_bookmark_normalized >= bookmark_date:
                     if self.is_selected():
                         write_record(self.tap_stream_id, transformed_record)
@@ -480,7 +506,7 @@ class MetricsBaseStream(IncrementalStream):
             if current_max_bookmark_date != bookmark_date:
                 # Ensure bookmark is a string and normalize format
                 current_max_bookmark_str = str(current_max_bookmark_date)
-                
+
                 # FIX: Parse and reformat to ensure consistent format without microseconds
                 # This handles two scenarios:
                 # 1. Timestamp has microseconds: "2026-02-08T18:30:00.000000Z"
@@ -503,14 +529,14 @@ class MetricsBaseStream(IncrementalStream):
                     except ValueError:
                         # Keep as-is if parsing fails, but still normalize microseconds
                         current_max_bookmark_date = current_max_bookmark_str.replace(".000000Z", "Z")
-                    
+
             state = self.write_bookmark(state, self.tap_stream_id, value=current_max_bookmark_date)
             return counter.value
 
 
 class EmptyStream(FullTableStream):
     """Base class for streams that are unavailable or unsupported.
-    
+
     Returns empty data to allow tap to continue processing other streams.
     Use for endpoints that:
     - Don't exist in the API version
@@ -526,9 +552,9 @@ class EmptyStream(FullTableStream):
 class ChildBaseStream(IncrementalStream):
     """Base Class for Child Stream."""
 
-    def __init__(self, client=None, catalog=None) -> None:
+    def __init__(self, client=None, catalog=None, config=None) -> None:
         """Initialize ChildBaseStream."""
-        super().__init__(client, catalog)
+        super().__init__(client, catalog, config)
         self.bookmark_value = None
 
     def get_url_endpoint(self, parent_obj=None):
