@@ -107,152 +107,153 @@ class SparkpostBaseTest(BaseCase):
                 cls.OBEYS_START_DATE: False,
                 cls.API_LIMIT: 100
             },
-            # Metrics streams - all INCREMENTAL with "ts" replication key
-            # Note: ts is not in schema properties, so won't be marked as automatic
+            # Metrics streams - all INCREMENTAL with "timestamp" replication key
+            # Note: API returns 'ts' but modify_object() renames it to 'timestamp'
+            # All metrics streams include timestamp as part of composite primary key
             "metrics_recipient_domain": {
-                cls.PRIMARY_KEYS: {"domain"},
+                cls.PRIMARY_KEYS: {"timestamp", "domain"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
-                cls.REPLICATION_KEYS: {"ts"},
+                cls.REPLICATION_KEYS: {"timestamp"},
                 cls.OBEYS_START_DATE: True,
                 cls.API_LIMIT: 100
             },
             "metrics_sending_ip": {
-                cls.PRIMARY_KEYS: {"sending_ip"},
+                cls.PRIMARY_KEYS: {"timestamp", "sending_ip"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
-                cls.REPLICATION_KEYS: {"ts"},
+                cls.REPLICATION_KEYS: {"timestamp"},
                 cls.OBEYS_START_DATE: True,
                 cls.API_LIMIT: 100
             },
             "metrics_ip_pool": {
-                cls.PRIMARY_KEYS: {"ip_pool"},
+                cls.PRIMARY_KEYS: {"timestamp", "ip_pool"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
-                cls.REPLICATION_KEYS: {"ts"},
+                cls.REPLICATION_KEYS: {"timestamp"},
                 cls.OBEYS_START_DATE: True,
                 cls.API_LIMIT: 100
             },
             "metrics_sending_domain": {
-                cls.PRIMARY_KEYS: {"sending_domain"},
+                cls.PRIMARY_KEYS: {"timestamp", "sending_domain"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
-                cls.REPLICATION_KEYS: {"ts"},
+                cls.REPLICATION_KEYS: {"timestamp"},
                 cls.OBEYS_START_DATE: True,
                 cls.API_LIMIT: 100
             },
             "metrics_subaccount": {
-                cls.PRIMARY_KEYS: {"subaccount_id"},
+                cls.PRIMARY_KEYS: {"timestamp", "subaccount_id"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
-                cls.REPLICATION_KEYS: {"ts"},
+                cls.REPLICATION_KEYS: {"timestamp"},
                 cls.OBEYS_START_DATE: True,
                 cls.API_LIMIT: 100
             },
             "metrics_campaign": {
-                cls.PRIMARY_KEYS: {"campaign_id"},
+                cls.PRIMARY_KEYS: {"timestamp", "campaign_id"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
-                cls.REPLICATION_KEYS: {"ts"},
+                cls.REPLICATION_KEYS: {"timestamp"},
                 cls.OBEYS_START_DATE: True,
                 cls.API_LIMIT: 100
             },
             "metrics_template": {
-                cls.PRIMARY_KEYS: {"template_id"},
+                cls.PRIMARY_KEYS: {"timestamp", "template_id"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
-                cls.REPLICATION_KEYS: {"ts"},
+                cls.REPLICATION_KEYS: {"timestamp"},
                 cls.OBEYS_START_DATE: True,
                 cls.API_LIMIT: 100
             },
             "metrics_subject_campaign": {
-                cls.PRIMARY_KEYS: {"subject_campaign"},
+                cls.PRIMARY_KEYS: {"timestamp", "subject_campaign"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
-                cls.REPLICATION_KEYS: {"ts"},
+                cls.REPLICATION_KEYS: {"timestamp"},
                 cls.OBEYS_START_DATE: True,
                 cls.API_LIMIT: 100
             },
             "metrics_watched_domain": {
-                cls.PRIMARY_KEYS: {"watched_domain"},
+                cls.PRIMARY_KEYS: {"timestamp", "watched_domain"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
-                cls.REPLICATION_KEYS: {"ts"},
+                cls.REPLICATION_KEYS: {"timestamp"},
                 cls.OBEYS_START_DATE: True,
                 cls.API_LIMIT: 100
             },
             "metrics_mailbox_provider": {
-                cls.PRIMARY_KEYS: {"mailbox_provider"},
+                cls.PRIMARY_KEYS: {"timestamp", "mailbox_provider"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
-                cls.REPLICATION_KEYS: {"ts"},
+                cls.REPLICATION_KEYS: {"timestamp"},
                 cls.OBEYS_START_DATE: True,
                 cls.API_LIMIT: 100
             },
             "metrics_mailbox_provider_region": {
-                cls.PRIMARY_KEYS: {"mailbox_provider_region"},
+                cls.PRIMARY_KEYS: {"timestamp", "mailbox_provider_region"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
-                cls.REPLICATION_KEYS: {"ts"},
+                cls.REPLICATION_KEYS: {"timestamp"},
                 cls.OBEYS_START_DATE: True,
                 cls.API_LIMIT: 100
             },
             "metrics_time_series": {
-                cls.PRIMARY_KEYS: {"ts"},
+                cls.PRIMARY_KEYS: {"timestamp"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
-                cls.REPLICATION_KEYS: {"ts"},
+                cls.REPLICATION_KEYS: {"timestamp"},
                 cls.OBEYS_START_DATE: True,
                 cls.API_LIMIT: 100
             },
             "metrics_bounce_reason": {
-                cls.PRIMARY_KEYS: {"reason", "classification_id"},
+                cls.PRIMARY_KEYS: {"timestamp", "reason", "classification_id"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
-                cls.REPLICATION_KEYS: {"ts"},
+                cls.REPLICATION_KEYS: {"timestamp"},
                 cls.OBEYS_START_DATE: True,
                 cls.API_LIMIT: 100
             },
             "metrics_bounce_reason_by_domain": {
-                cls.PRIMARY_KEYS: {"reason", "domain", "classification_id"},
+                cls.PRIMARY_KEYS: {"timestamp", "reason", "domain", "classification_id"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
-                cls.REPLICATION_KEYS: {"ts"},
+                cls.REPLICATION_KEYS: {"timestamp"},
                 cls.OBEYS_START_DATE: True,
                 cls.API_LIMIT: 100
             },
             "metrics_bounce_classification": {
-                cls.PRIMARY_KEYS: {"classification_id"},
+                cls.PRIMARY_KEYS: {"timestamp", "classification_id"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
-                cls.REPLICATION_KEYS: {"ts"},
+                cls.REPLICATION_KEYS: {"timestamp"},
                 cls.OBEYS_START_DATE: True,
                 cls.API_LIMIT: 100
             },
             "metrics_rejection_reason": {
-                cls.PRIMARY_KEYS: {"reason", "rejection_category_id"},
+                cls.PRIMARY_KEYS: {"timestamp", "reason", "rejection_category_id"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
-                cls.REPLICATION_KEYS: {"ts"},
+                cls.REPLICATION_KEYS: {"timestamp"},
                 cls.OBEYS_START_DATE: True,
                 cls.API_LIMIT: 100
             },
             "metrics_rejection_reason_by_domain": {
-                cls.PRIMARY_KEYS: {"reason", "domain", "rejection_category_id"},
+                cls.PRIMARY_KEYS: {"timestamp", "reason", "domain", "rejection_category_id"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
-                cls.REPLICATION_KEYS: {"ts"},
+                cls.REPLICATION_KEYS: {"timestamp"},
                 cls.OBEYS_START_DATE: True,
                 cls.API_LIMIT: 100
             },
             "metrics_delay_reason": {
-                cls.PRIMARY_KEYS: {"reason"},
+                cls.PRIMARY_KEYS: {"timestamp", "reason"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
-                cls.REPLICATION_KEYS: {"ts"},
+                cls.REPLICATION_KEYS: {"timestamp"},
                 cls.OBEYS_START_DATE: True,
                 cls.API_LIMIT: 100
             },
             "metrics_delay_reason_by_domain": {
-                cls.PRIMARY_KEYS: {"reason", "domain"},
+                cls.PRIMARY_KEYS: {"timestamp", "reason", "domain"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
-                cls.REPLICATION_KEYS: {"ts"},
+                cls.REPLICATION_KEYS: {"timestamp"},
                 cls.OBEYS_START_DATE: True,
                 cls.API_LIMIT: 100
             },
             "metrics_engagement_details": {
-                cls.PRIMARY_KEYS: {"link_name"},
+                cls.PRIMARY_KEYS: {"timestamp", "link_name"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
-                cls.REPLICATION_KEYS: {"ts"},
+                cls.REPLICATION_KEYS: {"timestamp"},
                 cls.OBEYS_START_DATE: True,
                 cls.API_LIMIT: 100
             },
             "metrics_deliveries_by_attempt": {
-                cls.PRIMARY_KEYS: {"attempt"},
+                cls.PRIMARY_KEYS: {"timestamp", "attempt"},
                 cls.REPLICATION_METHOD: cls.INCREMENTAL,
-                cls.REPLICATION_KEYS: {"ts"},
+                cls.REPLICATION_KEYS: {"timestamp"},
                 cls.OBEYS_START_DATE: True,
                 cls.API_LIMIT: 100
             }
@@ -330,29 +331,21 @@ class SparkpostBaseTest(BaseCase):
         - Most metrics streams: return primary keys only (ts not in schema)
         - metrics_time_series: return {"ts"} (ts is both primary and replication key)
         """
-        metrics_streams_without_ts_in_schema = {
-            "metrics_recipient_domain", "metrics_sending_ip", "metrics_ip_pool",
-            "metrics_sending_domain", "metrics_subaccount", "metrics_campaign",
-            "metrics_template", "metrics_subject_campaign", "metrics_watched_domain",
-            "metrics_mailbox_provider", "metrics_mailbox_provider_region",
-            "metrics_bounce_reason",
-            "metrics_bounce_reason_by_domain", "metrics_bounce_classification",
-            "metrics_rejection_reason", "metrics_rejection_reason_by_domain",
-            "metrics_delay_reason", "metrics_delay_reason_by_domain",
-            "metrics_engagement_details", "metrics_deliveries_by_attempt"
-        }
+        # All metrics streams now have timestamp in schema (renamed from ts)
+        # No special handling needed - all streams include replication keys as automatic
+        metrics_streams_without_timestamp_in_schema = set()  # Empty set - all have timestamp now
         
         automatic_fields = {}
         for table, properties in self.expected_metadata().items():
             # Start with primary keys as automatic fields
             auto_fields = properties.get(self.PRIMARY_KEYS, set()).copy()
             
-            if table in metrics_streams_without_ts_in_schema:
-                # These metrics streams have ts as replication key but it's not in schema
+            if table in metrics_streams_without_timestamp_in_schema:
+                # These metrics streams have timestamp as replication key but it's not in schema
                 # Only primary keys are automatic
                 pass
             else:
-                # Non-metrics streams + metrics_time_series: add replication keys
+                # All streams: add replication keys as automatic
                 auto_fields.update(properties.get(self.REPLICATION_KEYS, set()))
             
             automatic_fields[table] = auto_fields
