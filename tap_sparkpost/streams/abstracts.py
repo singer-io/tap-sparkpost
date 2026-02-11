@@ -342,7 +342,7 @@ BOUNCE_METRICS = [
 
 class MetricsBaseStream(IncrementalStream):
     """Base class for metrics streams with date-based incremental syncing.
-
+    
     All SparkPost metrics endpoints require date parameters:
     - from: Required datetime parameter (YYYY-MM-DDTHH:MM)
     - to: Optional datetime parameter (defaults to now)
@@ -591,14 +591,13 @@ class MetricsBaseStream(IncrementalStream):
                     except ValueError:
                         # Keep normalized string if parsing fails
                         current_max_bookmark_date = current_max_bookmark_str
-
             state = self.write_bookmark(state, self.tap_stream_id, value=current_max_bookmark_date)
             return counter.value
 
 
 class EmptyStream(FullTableStream):
     """Base class for streams that are unavailable or unsupported.
-
+    
     Returns empty data to allow tap to continue processing other streams.
     Use for endpoints that:
     - Don't exist in the API version
