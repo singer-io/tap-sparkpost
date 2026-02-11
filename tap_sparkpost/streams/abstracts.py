@@ -591,7 +591,6 @@ class MetricsBaseStream(IncrementalStream):
                     except ValueError:
                         # Keep normalized string if parsing fails
                         current_max_bookmark_date = current_max_bookmark_str
-
             state = self.write_bookmark(state, self.tap_stream_id, value=current_max_bookmark_date)
             return counter.value
 
