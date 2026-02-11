@@ -234,13 +234,15 @@
       "type": [
         "null",
         "object"
-      ]
+      ],
+      "additionalProperties": true
     },
     "pending_cancellation": {
       "type": [
         "null",
         "object"
-      ]
+      ],
+      "additionalProperties": true
     }
   },
   "additionalProperties": false

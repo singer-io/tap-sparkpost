@@ -4,7 +4,7 @@ from tap_sparkpost.streams.abstracts import MetricsBaseStream, BOUNCE_METRICS
 class MetricsBounceReason(MetricsBaseStream):
     """Stream for retrieving bounce reason metrics."""
     tap_stream_id = "metrics_bounce_reason"
-    key_properties = ["reason", "classification_id"]
+    key_properties = ["timestamp", "reason", "classification_id"]
     data_key = "results"
     path = "metrics/deliverability/bounce-reason"
 
