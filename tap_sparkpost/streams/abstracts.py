@@ -486,7 +486,21 @@ class MetricsBaseStream(IncrementalStream):
                 # This normalization ensures string comparison works correctly:
                 #   - Before: "2026-02-08T17:30:00.000000Z" >= "2026-02-08T18:30:00Z" (incorrect result)
                 #   - After:  "2026-02-08T17:30:00Z" >= "2026-02-08T18:30:00Z" (correct result)
-                record_bookmark_normalized = record_bookmark.replace(".000000Z", "Z")
+                record_bookmark_normalized = record_bookmark.replace(".000000Z", "Z").replace("+00:00", "Z")
+
+                # FIX: Also normalize the timestamp IN the record itself before writing
+                # The test framework's parse_date() method fails to parse ".000000Z" format correctly
+                # when the system timezone is not UTC. It treats "2026-02-08T19:00:00.000000Z" as
+                # timezone-naive, then assumes it's in local time (e.g., IST +5:30) and converts
+                # to UTC, causing a 5:30 hour shift in the wrong direction.
+                # By normalizing to "Z" format (without microseconds), parse_date correctly identifies
+                # it as UTC using the "%Y-%m-%dT%H:%M:%S%z" format pattern.
+                #
+                # Also handle "+00:00" format from API response and convert to "Z" format
+                # to ensure consistent UTC representation that parse_date can handle.
+                if record_bookmark != record_bookmark_normalized:
+                    transformed_record[self.replication_keys[0]] = record_bookmark_normalized
+                    record_bookmark = record_bookmark_normalized
 
                 if record_bookmark_normalized >= bookmark_date:
                     if self.is_selected():
@@ -506,6 +520,9 @@ class MetricsBaseStream(IncrementalStream):
             if current_max_bookmark_date != bookmark_date:
                 # Ensure bookmark is a string and normalize format
                 current_max_bookmark_str = str(current_max_bookmark_date)
+
+                # First normalize common format variations ("+00:00" and ".000000Z" to "Z")
+                current_max_bookmark_str = current_max_bookmark_str.replace("+00:00", "Z").replace(".000000Z", "Z")
 
                 # FIX: Parse and reformat to ensure consistent format without microseconds
                 # This handles two scenarios:
@@ -527,8 +544,8 @@ class MetricsBaseStream(IncrementalStream):
                         parsed_date = datetime.strptime(current_max_bookmark_str, "%Y-%m-%dT%H:%M:%SZ")
                         current_max_bookmark_date = parsed_date.strftime("%Y-%m-%dT%H:%M:%SZ")
                     except ValueError:
-                        # Keep as-is if parsing fails, but still normalize microseconds
-                        current_max_bookmark_date = current_max_bookmark_str.replace(".000000Z", "Z")
+                        # Keep normalized string if parsing fails
+                        current_max_bookmark_date = current_max_bookmark_str
 
             state = self.write_bookmark(state, self.tap_stream_id, value=current_max_bookmark_date)
             return counter.value
