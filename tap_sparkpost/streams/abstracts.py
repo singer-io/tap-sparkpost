@@ -1,12 +1,6 @@
 """Base stream classes for SparkPost tap."""
 from abc import ABC, abstractmethod
 import json
-# CHANGE: Added datetime import to support bookmark timestamp format normalization
-# REASON: The MetricsBaseStream.sync() method needs to parse and reformat timestamps
-#         to remove microseconds (.000000Z) from bookmark values. This ensures
-#         consistent timestamp format ("2026-02-08T18:30:00Z") for bookmark comparisons.
-# EXAMPLE: datetime.strptime("2026-02-08T18:30:00.000000Z", "%Y-%m-%dT%H:%M:%S.%fZ")
-#          .strftime("%Y-%m-%dT%H:%M:%SZ") -> "2026-02-08T18:30:00Z"
 from datetime import datetime
 from typing import Any, Dict, Tuple, List, Iterator
 from singer import (
@@ -423,67 +417,16 @@ class MetricsBaseStream(IncrementalStream):
         transformer: Transformer,
         parent_obj: Dict = None,
     ) -> Dict:
-        """Implementation for metrics incremental stream with date parameters.
-
-        CHANGE REASON:
-        This method was modified to fix bookmark comparison and format issues that caused
-        the test_bookmark integration tests to fail. The core issues were:
-        1. Records with earlier timestamps were passing the bookmark filter incorrectly
-        2. Bookmarks were written with microseconds (.000000Z) but needed to be written without
-
-        ORIGINAL ISSUES:
-        - String comparison "2026-02-08T17:30:00.000000Z" >=
-          "2026-02-08T18:30:00Z" would fail due to microseconds
-        - When comparing timestamps as strings, "17:30" would appear
-          less than "18:30" only if formats matched exactly
-        - Bookmarks written with .000000Z format but tests expected
-          clean format without microseconds
-
-        EXAMPLE FAILURE SCENARIO:
-        Before fix:
-          - Bookmark: "2026-02-08T18:30:00Z"
-          - Record timestamp: "2026-02-08T17:30:00.000000Z"
-          - Comparison: "2026-02-08T17:30:00.000000Z" >= "2026-02-08T18:30:00Z"
-          - Result: PASS (incorrectly) because string comparison with .000000Z
-          - Expected: FAIL (record is before bookmark)
-
-        After fix:
-          - Bookmark: "2026-02-08T18:30:00Z"
-          - Record timestamp normalized: "2026-02-08T17:30:00Z" (removed .000000Z)
-          - Comparison: "2026-02-08T17:30:00Z" >= "2026-02-08T18:30:00Z"
-          - Result: FAIL (correctly filters out old record)
-          - Expected: FAIL ✓
-
-        SOLUTION:
-        1. Ensure record_bookmark is always a string type before comparison
-        2. Normalize timestamp format by removing microseconds (.000000Z -> Z)
-        3. Perform string comparison with normalized timestamps
-        4. When writing bookmarks, parse and reformat to remove microseconds
-
-        IMPLEMENTATION DETAILS:
-        - String type checking: isinstance(record_bookmark, str)
-        - Microsecond normalization: .replace(".000000Z", "Z")
-        - Bookmark formatting: datetime.strptime/strftime
-        - Handles both formats: "%Y-%m-%dT%H:%M:%S.%fZ" and "%Y-%m-%dT%H:%M:%SZ"
-        """
+        """Implementation for metrics incremental stream with date parameters."""
         bookmark_date = self.get_bookmark(state, self.tap_stream_id)
         current_max_bookmark_date = bookmark_date
 
-        # SparkPost API uses 'from' and 'to' parameters for date filtering
-        # Format: YYYY-MM-DDTHH:MM:SSZ (UTC)
-        # Reference:
-        # https://developers.sparkpost.com/api/metrics/#header-metrics-api
         params = {
             "from": bookmark_date,
             "metrics": ",".join(self.default_metrics)
         }
-
-        # Add precision parameter if supported by this endpoint
-        # (only time-series endpoint supports precision parameter)
         params.update(self.get_precision_params())
-
         self.update_params(**params)
-
         self.update_data_payload(parent_obj=parent_obj)
         self.url_endpoint = self.get_url_endpoint(parent_obj)
 
@@ -494,44 +437,20 @@ class MetricsBaseStream(IncrementalStream):
                     record, self.schema, self.metadata
                 )
 
-                # Use 'timestamp' field for time-series metrics, or fallback to bookmark
                 record_bookmark = transformed_record.get(self.replication_keys[0], bookmark_date)
 
-                # FIX: Ensure record_bookmark is a string for comparison
-                # API responses may return timestamps as datetime objects
-                # Converting to string ensures consistent comparison with
-                # bookmark_date (always string)
+                # Ensure string type for comparison
                 if not isinstance(record_bookmark, str):
                     record_bookmark = str(record_bookmark)
 
-                # FIX: Normalize format by removing microseconds for
-                # consistent comparison. SparkPost API may return timestamps
-                # with microseconds: "2026-02-08T17:30:00.000000Z"
-                # Want to compare against bookmarks without microseconds:
-                # "2026-02-08T17:30:00Z"
-                # This normalization ensures string comparison works:
-                #   - Before: "2026-02-08T17:30:00.000000Z" >=
-                #     "2026-02-08T18:30:00Z" (incorrect)
-                #   - After:  "2026-02-08T17:30:00Z" >=
-                #     "2026-02-08T18:30:00Z" (correct)
+                # Normalize timestamp format: remove microseconds and standardize timezone
                 record_bookmark_normalized = record_bookmark.replace(
                     ".000000Z", "Z"
                 ).replace("+00:00", "Z")
 
-                # FIX: Normalize timestamp IN the record before writing
-                # Test framework parse_date() fails with ".000000Z" format
-                # when system timezone is not UTC. It treats timestamp as
-                # timezone-naive, assumes local time (e.g., IST +5:30),
-                # and converts to UTC incorrectly.
-                # By normalizing to "Z" format (no microseconds),
-                # parse_date correctly identifies it as UTC.
-                #
-                # Also handle "+00:00" format from API and convert to "Z"
-                # for consistent UTC representation.
+                # Update record with normalized timestamp
                 if record_bookmark != record_bookmark_normalized:
-                    transformed_record[self.replication_keys[0]] = (
-                        record_bookmark_normalized
-                    )
+                    transformed_record[self.replication_keys[0]] = record_bookmark_normalized
                     record_bookmark = record_bookmark_normalized
 
                 if record_bookmark_normalized >= bookmark_date:
@@ -546,51 +465,29 @@ class MetricsBaseStream(IncrementalStream):
                     for child in self.child_to_sync:
                         child.sync(state=state, transformer=transformer, parent_obj=record)
 
-            # FIX: Write bookmark with max timestamp from synced records
-            # Normalize format to remove microseconds for consistent bookmarks
-            # test_bookmark tests expect: "2026-02-08T18:30:00Z"
-            # (without .000000Z)
+            # Normalize bookmark format before writing
             if current_max_bookmark_date != bookmark_date:
-                # Ensure bookmark is a string and normalize format
                 current_max_bookmark_str = str(current_max_bookmark_date)
-
-                # First normalize common format variations
-                # ("+00:00" and ".000000Z" to "Z")
                 current_max_bookmark_str = (
                     current_max_bookmark_str.replace("+00:00", "Z")
                     .replace(".000000Z", "Z")
                 )
 
-                # FIX: Parse and reformat to ensure consistent format
-                # without microseconds. This handles two scenarios:
-                # 1. Timestamp has microseconds: "2026-02-08T18:30:00.000000Z"
-                #    - Parse with %f format specifier
-                #    - Reformat without %f to remove microseconds
-                #    - Result: "2026-02-08T18:30:00Z"
-                # 2. Timestamp already clean: "2026-02-08T18:30:00Z"
-                #    - Parse with standard format
-                #    - Reformat to same format (idempotent)
-                #    - Result: "2026-02-08T18:30:00Z"
+                # Parse and reformat to remove microseconds
                 try:
-                    # Try parsing with microseconds first
                     parsed_date = datetime.strptime(
                         current_max_bookmark_str, "%Y-%m-%dT%H:%M:%S.%fZ"
                     )
-                    current_max_bookmark_date = parsed_date.strftime(
-                        "%Y-%m-%dT%H:%M:%SZ"
-                    )
+                    current_max_bookmark_date = parsed_date.strftime("%Y-%m-%dT%H:%M:%SZ")
                 except ValueError:
-                    # Try without microseconds
                     try:
                         parsed_date = datetime.strptime(
                             current_max_bookmark_str, "%Y-%m-%dT%H:%M:%SZ"
                         )
-                        current_max_bookmark_date = parsed_date.strftime(
-                            "%Y-%m-%dT%H:%M:%SZ"
-                        )
+                        current_max_bookmark_date = parsed_date.strftime("%Y-%m-%dT%H:%M:%SZ")
                     except ValueError:
-                        # Keep normalized string if parsing fails
                         current_max_bookmark_date = current_max_bookmark_str
+
             state = self.write_bookmark(state, self.tap_stream_id, value=current_max_bookmark_date)
             return counter.value
 
