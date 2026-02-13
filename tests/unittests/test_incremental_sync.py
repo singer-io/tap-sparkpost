@@ -108,7 +108,3 @@ class TestIncrementalBookmark(unittest.TestCase):
                 _, kwargs = call
                 if 'value' in kwargs:
                     self.assertTrue(kwargs['value'] >= current_bookmark)
-
-
-if __name__ == '__main__':
-    unittest.main()

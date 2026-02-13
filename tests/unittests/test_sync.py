@@ -170,7 +170,3 @@ class TestPrecisionParameter(unittest.TestCase):
 
         params = stream.get_precision_params()
         self.assertEqual(params, {})
-
-
-if __name__ == '__main__':
-    unittest.main() 

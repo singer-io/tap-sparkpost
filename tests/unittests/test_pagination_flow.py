@@ -113,7 +113,3 @@ class TestPaginationFlow(unittest.TestCase):
 
         # Should have collected records but stopped due to safety
         self.assertTrue(len(records) > 0)
-
-
-if __name__ == '__main__':
-    unittest.main()
