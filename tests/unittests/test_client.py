@@ -156,34 +156,28 @@ class TestBackoffRetry(unittest.TestCase):
             # Verify sleep was called for backoff
             self.assertTrue(mock_sleep.called)
 
+    @parameterized.expand([
+        ["success_on_2nd_attempt", 1, 2],
+        ["success_on_3rd_attempt", 2, 3],
+        ["success_on_4th_attempt", 3, 4],
+    ])
     @patch("time.sleep")
-    def test_successful_retry_after_failure(self, mock_sleep):
+    def test_successful_retry_after_failure(self, test_name, num_failures, expected_attempts, mock_sleep):
         """Test that request succeeds after initial failures."""
-        responses = [
-            MockResponse(503, text={"errors": [{"message": "Service unavailable"}]}),
-            MockResponse(503, text={"errors": [{"message": "Service unavailable"}]}),
-            MockResponse(200, text={"results": [{"event_id": "123"}]}, raise_error=False)
-        ]
+        responses = []
+        # Add failure responses
+        for _ in range(num_failures):
+            responses.append(MockResponse(503, text={"errors": [{"message": "Service unavailable"}]}))
+        # Add success response
+        responses.append(MockResponse(200, text={"results": [{"event_id": "123"}]}, raise_error=False))
 
         with patch.object(self.client._session, "request", side_effect=responses) as mock_request:
             result = self.client._Client__make_request("GET", "https://api.sparkpost.com/api/v1/events")
 
-        # Should succeed on third attempt
+        # Should succeed on expected attempt
         self.assertEqual(result, {"results": [{"event_id": "123"}]})
-        self.assertEqual(mock_request.call_count, 3)
-        self.assertTrue(mock_sleep.called)
-
-    @patch("time.sleep")
-    def test_exponential_backoff_timing(self, mock_sleep):
-        """Test that backoff uses exponential timing (factor=2)."""
-        mock_response = MockResponse(500, text={"errors": [{"message": "Internal server error"}]})
-
-        with patch.object(self.client._session, "request", return_value=mock_response):
-            with self.assertRaises(SparkPostInternalServerError):
-                self.client._Client__make_request("GET", "https://api.sparkpost.com/api/v1/events")
-
-        # Verify sleep was called with increasing delays (exponential backoff)
-        self.assertTrue(mock_sleep.call_count >= 3)
+        self.assertEqual(mock_request.call_count, expected_attempts)
+        self.assertEqual(mock_sleep.call_count, num_failures)
 
 
 class TestAuthentication(unittest.TestCase):

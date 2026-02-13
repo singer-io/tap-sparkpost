@@ -112,7 +112,11 @@ class BaseStream(ABC):  # pylint: disable=too-many-instance-attributes
         self.params["per_page"] = self.page_size
         self.params["cursor"] = "initial"
 
-        while True:
+        max_pages = 10000  # Safety limit for pagination
+        current_page = 0
+        has_more_pages = True
+
+        while has_more_pages and current_page < max_pages:
             response = self.client.make_request(
                 self.http_method,
                 self.url_endpoint,
@@ -138,6 +142,7 @@ class BaseStream(ABC):  # pylint: disable=too-many-instance-attributes
                         break
 
             if not next_url:
+                has_more_pages = False
                 break
 
             # Extract cursor from next URL
@@ -146,7 +151,9 @@ class BaseStream(ABC):  # pylint: disable=too-many-instance-attributes
             if "cursor=" in next_url:
                 cursor_param = next_url.split("cursor=")[1].split("&")[0]
                 self.params["cursor"] = cursor_param
+                current_page += 1
             else:
+                has_more_pages = False
                 break
 
     def write_schema(self) -> None:
