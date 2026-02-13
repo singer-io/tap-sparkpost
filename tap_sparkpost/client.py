@@ -112,7 +112,7 @@ class Client:
     def make_request(
         self,
         method: str,
-        endpoint: str,
+        endpoint: Optional[str],
         params: Optional[Dict] = None,
         headers: Optional[Dict] = None,
         body: Optional[str] = None,
