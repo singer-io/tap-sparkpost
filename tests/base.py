@@ -1,8 +1,6 @@
 import os
-import unittest
 
-from tap_tester import connections, menagerie, runner
-from tap_tester.logger import LOGGER
+from tap_tester import connections, menagerie
 from tap_tester.base_suite_tests.base_case import BaseCase
 
 

@@ -16,7 +16,7 @@ class SparkpostBookMarkTest(BookmarkTest, SparkpostBaseTest):
     
     initial_bookmarks = {
         "bookmarks": {
-            "metrics_time_series": { "ts" : "2020-01-01T00:00:00Z"},
+            "metrics_time_series": { "timestamp" : "2020-01-01T00:00:00Z"},
         }
     }
     
