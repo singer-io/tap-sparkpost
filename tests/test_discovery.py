@@ -63,8 +63,8 @@ class SparkpostDiscoveryTest(DiscoveryTest, SparkpostBaseTest):
 
                 expected_parent_tap_stream_id = self.expected_parent_tap_stream(stream)
 
-
-                catalog = [catalog for catalog in self.found_catalogs
+                catalogs = menagerie.get_catalogs(self.conn_id)
+                catalog = [catalog for catalog in catalogs
                            if catalog["stream_name"] == stream][0]
                 metadata = menagerie.get_annotated_schema(
                     self.conn_id, catalog['stream_id'])["metadata"]
