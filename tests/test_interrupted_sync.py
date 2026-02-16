@@ -5,7 +5,8 @@ from tap_tester.base_suite_tests.interrupted_sync_test import InterruptedSyncTes
 
 @unittest.skip(
     "Interrupted sync test incompatible with tap architecture. "
-    "Test framework assumes: (1) full table streams have replication keys (SparkPost doesn't), "
+    "Test framework assumes:"
+    "(1) full table streams have replication keys (SparkPost doesn't), "
     "(2) streams sync in alphabetical order (not guaranteed)."
 )
 class SparkpostInterruptedSyncTest(InterruptedSyncTest, SparkpostBaseTest):

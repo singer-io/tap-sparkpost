@@ -15,4 +15,3 @@ class SparkpostAutomaticFields(MinimumSelectionTest, SparkpostBaseTest):
     def streams_to_test(self):
         # Only metrics_time_series has ts in schema and data in test account
         return {"metrics_time_series"}
-

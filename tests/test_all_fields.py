@@ -5,7 +5,7 @@ from tap_tester.base_suite_tests.all_fields_test import AllFieldsTest
 class SparkpostAllFields(AllFieldsTest, SparkpostBaseTest):
     """Ensure running the tap with all streams and fields selected results in
     the replication of all fields."""
-    
+
     MISSING_FIELDS = {
         "account": {"pending_cancellation", "pending_subscription", "usage", "support"},
         "usage": {"messaging", "recipient_validation"},
@@ -58,4 +58,3 @@ class SparkpostAllFields(AllFieldsTest, SparkpostBaseTest):
             "ip_pools",
             "metrics_time_series",
         }
-

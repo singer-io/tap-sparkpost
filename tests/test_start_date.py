@@ -29,10 +29,14 @@ class SparkpostStartDateTest(StartDateTest, SparkpostBaseTest):
     def streams_to_test(self):
         return {"metrics_time_series"}
 
+    @classmethod
     @property
-    def start_date_1(self):
+    def start_date_1(cls):
+        """First start date for testing."""
         return "2026-02-08T00:00:00Z"
 
+    @classmethod
     @property
-    def start_date_2(self):
+    def start_date_2(cls):
+        """Second start date for testing."""
         return "2026-02-10T00:00:00Z"

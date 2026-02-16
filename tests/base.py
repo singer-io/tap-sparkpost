@@ -332,12 +332,12 @@ class SparkpostBaseTest(BaseCase):
         # All metrics streams now have timestamp in schema (renamed from ts)
         # No special handling needed - all streams include replication keys as automatic
         metrics_streams_without_timestamp_in_schema = set()  # Empty set - all have timestamp now
-        
+
         automatic_fields = {}
         for table, properties in self.expected_metadata().items():
             # Start with primary keys as automatic fields
             auto_fields = properties.get(self.PRIMARY_KEYS, set()).copy()
-            
+
             if table in metrics_streams_without_timestamp_in_schema:
                 # These metrics streams have timestamp as replication key but it's not in schema
                 # Only primary keys are automatic
@@ -345,9 +345,9 @@ class SparkpostBaseTest(BaseCase):
             else:
                 # All streams: add replication keys as automatic
                 auto_fields.update(properties.get(self.REPLICATION_KEYS, set()))
-            
+
             automatic_fields[table] = auto_fields
-        
+
         if not stream:
             return automatic_fields
         return automatic_fields[stream]
@@ -398,7 +398,7 @@ class SparkpostBaseTest(BaseCase):
         # Get all discovered catalogs
         all_catalogs = menagerie.get_catalogs(conn_id)
         test_stream_names = {tc.get('stream_name') for tc in test_catalogs}
-        
+
         # Explicitly deselect streams NOT in test_catalogs
         for catalog in all_catalogs:
             if catalog.get('stream_name') not in test_stream_names:
@@ -410,6 +410,6 @@ class SparkpostBaseTest(BaseCase):
                 connections.select_catalog_and_fields_via_metadata(
                     conn_id, catalog, schema, additional_md=non_selected_metadata
                 )
-        
+
         # Now call the parent method to select and verify the test catalogs
         super().perform_and_verify_table_and_field_selection(conn_id, test_catalogs)

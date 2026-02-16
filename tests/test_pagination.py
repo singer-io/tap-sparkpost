@@ -13,4 +13,3 @@ class SparkpostPaginationTest(PaginationTest, SparkpostBaseTest):
     def streams_to_test(self):
         # Only metrics_time_series has enough records (1316) to test pagination
         return {"metrics_time_series"}
-

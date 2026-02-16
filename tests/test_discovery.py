@@ -50,13 +50,13 @@ class SparkpostDiscoveryTest(DiscoveryTest, SparkpostBaseTest):
 
     def test_parent_stream(self):
         """
-        Test that each stream's metadata correctly includes the expected parent tap stream ID.
+        Test parent tap stream ID in metadata.
 
         For each stream in `streams_to_test`, this test:
         - Retrieves the expected parent tap stream ID from test expectations.
         - Retrieves the actual metadata from the found catalog.
-        - Verifies that the metadata contains the `PARENT_TAP_STREAM_ID` key (except for the orphans stream).
-        - Confirms that the actual parent tap stream ID matches the expected value.
+        - Verifies metadata contains `PARENT_TAP_STREAM_ID` key (orphans exempt).
+        - Confirms the actual parent tap stream ID matches the expected value.
         """
         for stream in self.streams_to_test():
             with self.subTest(stream=stream):
@@ -86,4 +86,3 @@ class SparkpostDiscoveryTest(DiscoveryTest, SparkpostBaseTest):
                     self.assertEqual(expected_parent_tap_stream_id, actual_parent_tap_stream_id,
                                         logging=f"verify {expected_parent_tap_stream_id} "
                                                 f"is saved in metadata as a parent-tap-stream-id")
-
