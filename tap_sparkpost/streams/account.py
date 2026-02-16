@@ -1,4 +1,5 @@
 """Account stream for SparkPost tap."""
+# pylint: disable=duplicate-code
 from tap_sparkpost.streams.abstracts import FullTableStream
 
 class Account(FullTableStream):
