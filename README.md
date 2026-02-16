@@ -136,107 +136,108 @@ This tap:
 
 **[metrics_recipient_domain](https://developers.sparkpost.com/api/metrics/#metrics-get-metrics-by-recipient-domain)**
 - Data Key = results
-- Primary keys: ['domain']
+- Primary keys: ['timestamp', 'domain']
 - Replication strategy: INCREMENTAL
 
 **[metrics_sending_ip](https://developers.sparkpost.com/api/metrics/#metrics-get-metrics-by-sending-ip)**
 - Data Key = results
-- Primary keys: ['sending_ip']
+- Primary keys: ['timestamp', 'sending_ip']
 - Replication strategy: INCREMENTAL
 
 **[metrics_ip_pool](https://developers.sparkpost.com/api/metrics/#metrics-get-metrics-by-ip-pool)**
 - Data Key = results
-- Primary keys: ['ip_pool']
+- Primary keys: ['timestamp', 'ip_pool']
 - Replication strategy: INCREMENTAL
 
 **[metrics_sending_domain](https://developers.sparkpost.com/api/metrics/#metrics-get-metrics-by-sending-domain)**
 - Data Key = results
-- Primary keys: ['sending_domain']
+- Primary keys: ['timestamp', 'sending_domain']
 - Replication strategy: INCREMENTAL
 
 **[metrics_subaccount](https://developers.sparkpost.com/api/metrics/)**
 - Data Key = results
-- Primary keys: ['subaccount_id']
+- Primary keys: ['timestamp', 'subaccount_id']
 - Replication strategy: INCREMENTAL
 
 **[metrics_campaign](https://developers.sparkpost.com/api/metrics/#metrics-get-metrics-by-campaign)**
 - Data Key = results
-- Primary keys: ['campaign_id']
+- Primary keys: ['timestamp', 'campaign_id']
 - Replication strategy: INCREMENTAL
 
 **[metrics_template](https://developers.sparkpost.com/api/metrics/#metrics-get-metrics-by-template)**
 - Data Key = results
-- Primary keys: ['template_id']
+- Primary keys: ['timestamp', 'template_id']
 - Replication strategy: INCREMENTAL
 
 **[metrics_subject_campaign](https://developers.sparkpost.com/api/metrics/#metrics-get-metrics-by-subject-campaign)**
 - Data Key = results
-- Primary keys: ['subject_campaign']
+- Primary keys: ['timestamp', 'subject_campaign']
 - Replication strategy: INCREMENTAL
 
 **[metrics_watched_domain](https://developers.sparkpost.com/api/metrics/#metrics-get-metrics-by-watched-domain)**
 - Data Key = results
-- Primary keys: ['watched_domain']
+- Primary keys: ['timestamp', 'watched_domain']
 - Replication strategy: INCREMENTAL
 
 **[metrics_mailbox_provider](https://developers.sparkpost.com/api/metrics/#metrics-get-metrics-by-mailbox-provider)**
 - Data Key = results
-- Primary keys: ['mailbox_provider']
+- Primary keys: ['timestamp', 'mailbox_provider']
 - Replication strategy: INCREMENTAL
 
 **[metrics_mailbox_provider_region](https://developers.sparkpost.com/api/metrics/#metrics-get-metrics-by-mailbox-provider-region)**
 - Data Key = results
-- Primary keys: ['mailbox_provider_region']
+- Primary keys: ['timestamp', 'mailbox_provider_region']
 - Replication strategy: INCREMENTAL
 
 **[metrics_time_series](https://developers.sparkpost.com/api/metrics/#metrics-get-time-series-metrics)**
 - Data Key = results
-- Primary keys: ['ts']
+- Primary keys: ['timestamp']
 - Replication strategy: INCREMENTAL
+- **Supports precision parameter**: Controls aggregation level (1min, 5min, 15min, hour, 12hr, day, week, month)
 
 **[metrics_bounce_reason](https://developers.sparkpost.com/api/metrics/#metrics-get-bounce-reason-metrics)**
 - Data Key = results
-- Primary keys: ['reason', 'classification_id']
+- Primary keys: ['timestamp', 'reason', 'classification_id']
 - Replication strategy: INCREMENTAL
 
 **[metrics_bounce_reason_by_domain](https://developers.sparkpost.com/api/metrics/#metrics-get-bounce-reason-metrics-by-domain)**
 - Data Key = results
-- Primary keys: ['reason', 'domain', 'classification_id']
+- Primary keys: ['timestamp', 'reason', 'domain', 'classification_id']
 - Replication strategy: INCREMENTAL
 
 **[metrics_bounce_classification](https://developers.sparkpost.com/api/metrics/#metrics-get-bounce-classification-metrics)**
 - Data Key = results
-- Primary keys: ['classification_id']
+- Primary keys: ['timestamp', 'classification_id']
 - Replication strategy: INCREMENTAL
 
 **[metrics_rejection_reason](https://developers.sparkpost.com/api/metrics/#metrics-get-rejection-reason-metrics)**
 - Data Key = results
-- Primary keys: ['reason', 'rejection_category_id']
+- Primary keys: ['timestamp', 'reason', 'rejection_category_id']
 - Replication strategy: INCREMENTAL
 
 **[metrics_rejection_reason_by_domain](https://developers.sparkpost.com/api/metrics/#metrics-get-rejection-reason-metrics-by-domain)**
 - Data Key = results
-- Primary keys: ['reason', 'domain', 'rejection_category_id']
+- Primary keys: ['timestamp', 'reason', 'domain', 'rejection_category_id']
 - Replication strategy: INCREMENTAL
 
 **[metrics_delay_reason](https://developers.sparkpost.com/api/metrics/#metrics-get-delay-reason-metrics)**
 - Data Key = results
-- Primary keys: ['reason']
+- Primary keys: ['timestamp', 'reason']
 - Replication strategy: INCREMENTAL
 
 **[metrics_delay_reason_by_domain](https://developers.sparkpost.com/api/metrics/#metrics-get-delay-reason-metrics-by-domain)**
 - Data Key = results
-- Primary keys: ['reason', 'domain']
+- Primary keys: ['timestamp', 'reason', 'domain']
 - Replication strategy: INCREMENTAL
 
 **[metrics_engagement_details](https://developers.sparkpost.com/api/metrics/#metrics-get-engagement-details)**
 - Data Key = results
-- Primary keys: ['link_name']
+- Primary keys: ['timestamp', 'link_name']
 - Replication strategy: INCREMENTAL
 
 **[metrics_deliveries_by_attempt](https://developers.sparkpost.com/api/metrics/#metrics-get-deliveries-by-attempt)**
 - Data Key = results
-- Primary keys: ['attempt']
+- Primary keys: ['timestamp', 'attempt']
 - Replication strategy: INCREMENTAL
 
 
@@ -269,18 +270,39 @@ This tap:
 
 3. Create your tap's `config.json` file.  The tap config file for this tap should include these entries:
    - `api_key` (string, required): Your SparkPost API key
-   - `start_date` - the default value to use if no bookmark exists for an endpoint (rfc3339 date string)
+   - `start_date` (string, required): The default value to use if no bookmark exists for an endpoint (rfc3339 date string). Example: `"2019-01-01T00:00:00Z"`
    - `base_url` (string, optional): The SparkPost API base URL. Defaults to `https://api.sparkpost.com/api/v1`
-   - `user_agent` (string, optional): Process and email for API logging purposes. Example: `tap-sparkpost <api_user_email@your_company.com>`
-   - `request_timeout` (integer, `300`): Max time for which request should wait to get a response. Default request_timeout is 300 seconds.
+   - `request_timeout` (integer, optional): Max time in seconds for request to wait for response. Default: `300`
+   - `precision` (string, optional): **Time-series metrics only**. Controls aggregation level for [metrics_time_series](https://developers.sparkpost.com/api/metrics/#metrics-get-time-series-metrics) endpoint. Default: `"day"`
+
+    **Precision Parameter Values:**
+
+    The `precision` parameter is **only applicable to the metrics_time_series stream**. It controls how data is aggregated across time:
+
+    - `"1min"`: 1-minute aggregation - Returns metrics aggregated in 1-minute intervals
+    - `"5min"`: 5-minute aggregation - Returns metrics aggregated in 5-minute intervals
+    - `"15min"`: 15-minute aggregation - Returns metrics aggregated  in 15-minute intervals
+    - `"hour"`: Hourly aggregation - Returns metrics aggregated in 1-hour intervals
+    - `"12hr"`: 12-hour aggregation - Returns metrics aggregated in 12-hour intervals
+    - `"day"`: Daily aggregation (default) - Returns metrics aggregated per day
+    - `"week"`: Weekly aggregation - Returns metrics aggregated per week
+    - `"month"`: Monthly aggregation - Returns metrics aggregated per month
+
+    **Important Notes:**
+    - Precision parameter is **NOT supported** by other metrics endpoints (metrics_recipient_domain, metrics_sending_ip, etc.)
+    - Once a sync begins with a specific precision, do not change it during the sync to avoid mixed aggregation levels
+    - Smaller precision values (1min, 5min) will return more granular data but may impact API performance
+    - Reference: [SparkPost Time-Series Metrics API](https://developers.sparkpost.com/api/metrics/#metrics-get-time-series-metrics)
+
+    **Example config.json:**
 
     ```json
     {
         "api_key": "your_sparkpost_api_key_here",
         "start_date": "2019-01-01T00:00:00Z",
         "base_url": "https://api.sparkpost.com/api/v1",
-        "user_agent": "tap-sparkpost <api_user_email@your_company.com>",
-        "request_timeout": 300
+        "request_timeout": 300,
+        "precision": "day"
     }
 
     ```

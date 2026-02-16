@@ -4,6 +4,7 @@ from typing import Dict, Optional
 import singer
 from tap_sparkpost.streams import STREAMS
 from tap_sparkpost.client import Client
+from tap_sparkpost.exceptions import SparkPostForbiddenError, SparkPostBadRequestError
 
 LOGGER = singer.get_logger()
 
@@ -12,14 +13,14 @@ def update_currently_syncing(state: Dict, stream_name: Optional[str]) -> None:
     """
     Update currently_syncing in state and write it
     """
-    if stream_name:
-        singer.set_currently_syncing(state, stream_name)
+    if not stream_name and singer.get_currently_syncing(state):
+        del state["currently_syncing"]
     else:
-        state.pop("currently_syncing", None)
+        singer.set_currently_syncing(state, stream_name)
     singer.write_state(state)
 
 
-def write_schema(stream, client, streams_to_sync, catalog) -> None:
+def write_schema(stream, client, streams_to_sync, catalog, config) -> None:
     """
     Write schema for stream and its children
     """
@@ -27,8 +28,8 @@ def write_schema(stream, client, streams_to_sync, catalog) -> None:
         stream.write_schema()
 
     for child in stream.children:
-        child_obj = STREAMS[child](client, catalog.get_stream(child))
-        write_schema(child_obj, client, streams_to_sync, catalog)
+        child_obj = STREAMS[child](client, catalog.get_stream(child), config)
+        write_schema(child_obj, client, streams_to_sync, catalog, config)
         if child in streams_to_sync:
             stream.child_to_sync.append(child_obj)
 
@@ -37,7 +38,8 @@ def sync(client: Client, _config: Dict, catalog: singer.Catalog, state) -> None:
     """
     Sync selected streams from catalog
     """
-    _ = _config  # config parameter kept for API compatibility but currently unused
+    # Pass config to streams for aggregation precision and other settings
+    config = _config
 
     streams_to_sync = []
     for stream in catalog.get_selected_streams(state):
@@ -50,16 +52,26 @@ def sync(client: Client, _config: Dict, catalog: singer.Catalog, state) -> None:
     with singer.Transformer() as transformer:
         for stream_name in list(streams_to_sync):
 
-            stream = STREAMS[stream_name](client, catalog.get_stream(stream_name))
+            stream = STREAMS[stream_name](client, catalog.get_stream(stream_name), config)
             if stream.parent:
                 if stream.parent not in streams_to_sync:
                     streams_to_sync.append(stream.parent)
                 continue
 
-            write_schema(stream, client, streams_to_sync, catalog)
+            write_schema(stream, client, streams_to_sync, catalog, config)
             LOGGER.info("START Syncing: %s", stream_name)
             update_currently_syncing(state, stream_name)
-            total_records = stream.sync(state=state, transformer=transformer)
+
+            try:
+                total_records = stream.sync(state=state, transformer=transformer)
+            except (SparkPostForbiddenError, SparkPostBadRequestError) as error:
+                LOGGER.warning(
+                    "Skipping stream %s: %s",
+                    stream_name,
+                    str(error)
+                )
+                update_currently_syncing(state, None)
+                continue
 
             update_currently_syncing(state, None)
             LOGGER.info(

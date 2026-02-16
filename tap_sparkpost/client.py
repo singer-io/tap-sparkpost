@@ -29,7 +29,8 @@ def raise_for_error(response: requests.Response) -> None:
     """
     try:
         response_json = response.json()
-    except (ValueError, requests.exceptions.JSONDecodeError):
+    except (ValueError, TypeError, AttributeError):
+        # json() can raise ValueError for invalid JSON, TypeError/AttributeError for None
         response_json = {}
     if response.status_code not in [200, 201, 204]:
         # SparkPost returns errors in an "errors" array
@@ -77,10 +78,11 @@ class Client:
             "base_url", "https://api.sparkpost.com/api/v1"
         )
         config_request_timeout = config.get("request_timeout")
-        if config_request_timeout:
-            self.request_timeout = float(config_request_timeout)
-        else:
-            self.request_timeout = REQUEST_TIMEOUT
+        self.request_timeout = (
+            float(config_request_timeout)
+            if config_request_timeout
+            else REQUEST_TIMEOUT
+        )
 
     def __enter__(self):
         self.check_api_credentials()
@@ -90,7 +92,12 @@ class Client:
         self._session.close()
 
     def check_api_credentials(self) -> None:
-        """Check if API credentials are valid (placeholder for future implementation)."""
+        """
+        Check if API credentials are valid.
+        
+        Note: This is a placeholder for future implementation.
+        Currently, credentials are validated on first API call.
+        """
 
     def authenticate(self, headers: Dict, params: Dict) -> Tuple[Dict, Dict]:
         """Authenticates the request with the API key"""
@@ -101,16 +108,29 @@ class Client:
 
         return headers, params
 
+    # pylint: disable=too-many-arguments,too-many-positional-arguments
     def make_request(
-        self, method: str, endpoint: str = None, **kwargs
+        self,
+        method: str,
+        endpoint: Optional[str],
+        params: Optional[Dict] = None,
+        headers: Optional[Dict] = None,
+        body: Optional[str] = None,
+        path: Optional[str] = None
     ) -> Any:
         """
         Sends an HTTP request to the specified API endpoint.
+        
+        Args:
+            method: HTTP method (GET, POST, PUT, DELETE)
+            endpoint: Full URL or path to API endpoint
+            params: Query parameters
+            headers: HTTP headers
+            body: Request body data
+            path: API path (if endpoint not provided)
         """
-        params = kwargs.get('params') or {}
-        headers = kwargs.get('headers') or {}
-        body = kwargs.get('body') or {}
-        path = kwargs.get('path')
+        params = params or {}
+        headers = headers or {}
         endpoint = endpoint or f"{self.base_url}/{path}"
         headers, params = self.authenticate(headers, params)
         return self.__make_request(
