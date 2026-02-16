@@ -22,7 +22,7 @@ def discover() -> Catalog:
             LOGGER.error(err)
             LOGGER.error("stream_name: %s", stream_name)
             LOGGER.error("type schema_dict: %s", type(schema_dict))
-            raise err
+            raise
 
         key_properties = metadata.to_map(mdata).get((), {}).get("table-key-properties")
 

@@ -49,13 +49,21 @@ def sync(client: Client, _config: Dict, catalog: singer.Catalog, state) -> None:
     last_stream = singer.get_currently_syncing(state)
     LOGGER.info("last/currently syncing stream: %s", last_stream)
 
+    # Build complete list of streams including required parents before syncing
+    streams_with_parents = []
+    for stream_name in streams_to_sync:
+        stream = STREAMS[stream_name](client, catalog.get_stream(stream_name), config)
+        if stream.parent and stream.parent not in streams_with_parents:
+            streams_with_parents.append(stream.parent)
+        if stream_name not in streams_with_parents:
+            streams_with_parents.append(stream_name)
+
     with singer.Transformer() as transformer:
-        for stream_name in list(streams_to_sync):
+        for stream_name in streams_with_parents:
 
             stream = STREAMS[stream_name](client, catalog.get_stream(stream_name), config)
+            # Skip child streams - they are handled by their parents
             if stream.parent:
-                if stream.parent not in streams_to_sync:
-                    streams_to_sync.append(stream.parent)
                 continue
 
             write_schema(stream, client, streams_to_sync, catalog, config)

@@ -5,7 +5,16 @@ from unittest.mock import patch
 from parameterized import parameterized
 from requests.exceptions import Timeout, ConnectionError, ChunkedEncodingError
 from tap_sparkpost.client import Client
-from tap_sparkpost.exceptions import *
+from tap_sparkpost.exceptions import (
+    SparkPostBadRequestError,
+    SparkPostUnauthorizedError,
+    SparkPostForbiddenError,
+    SparkPostNotFoundError,
+    SparkPostBackoffError,
+    SparkPostInternalServerError,
+    SparkPostBadGatewayError,
+    SparkPostServiceUnavailableError
+)
 
 
 default_config = {

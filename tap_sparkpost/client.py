@@ -122,7 +122,7 @@ class Client:
         Sends an HTTP request to the specified API endpoint.
         
         Args:
-            method: HTTP method (GET, POST, PUT, DELETE)
+            method: HTTP method (GET, POST)
             endpoint: Full URL or path to API endpoint
             params: Query parameters
             headers: HTTP headers
@@ -167,4 +167,12 @@ class Client:
             else:
                 raise ValueError(f"Unsupported method: {method}")
 
-        return response.json()
+        # Handle responses with no content (e.g., HTTP 204) safely
+        if response.status_code == 204 or not response.content:
+            return {}
+
+        try:
+            return response.json()
+        except ValueError:
+            # Fallback for invalid or non-JSON responses on success codes
+            return {}
