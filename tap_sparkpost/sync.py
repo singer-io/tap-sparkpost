@@ -1,5 +1,5 @@
 """Sync mode for SparkPost tap."""
-from typing import Dict
+from typing import Dict, Optional
 
 import singer
 from tap_sparkpost.streams import STREAMS
@@ -9,7 +9,7 @@ from tap_sparkpost.exceptions import SparkPostForbiddenError, SparkPostBadReques
 LOGGER = singer.get_logger()
 
 
-def update_currently_syncing(state: Dict, stream_name: str) -> None:
+def update_currently_syncing(state: Dict, stream_name: Optional[str]) -> None:
     """
     Update currently_syncing in state and write it
     """

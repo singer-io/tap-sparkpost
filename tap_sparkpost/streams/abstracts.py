@@ -112,7 +112,10 @@ class BaseStream(ABC):  # pylint: disable=too-many-instance-attributes
         self.params["per_page"] = self.page_size
         self.params["cursor"] = "initial"
 
-        while True:
+        max_pages = 10000  # Safety limit for pagination
+        current_page = 0
+
+        while current_page < max_pages:
             response = self.client.make_request(
                 self.http_method,
                 self.url_endpoint,
@@ -137,17 +140,15 @@ class BaseStream(ABC):  # pylint: disable=too-many-instance-attributes
                         next_url = link.get("href")
                         break
 
-            if not next_url:
+            if not next_url or "cursor=" not in next_url:
                 break
 
             # Extract cursor from next URL
             # SparkPost returns full URL like:
             # /api/v1/events/message?events=delivery&per_page=1000&cursor=...
-            if "cursor=" in next_url:
-                cursor_param = next_url.split("cursor=")[1].split("&")[0]
-                self.params["cursor"] = cursor_param
-            else:
-                break
+            cursor_param = next_url.split("cursor=")[1].split("&")[0]
+            self.params["cursor"] = cursor_param
+            current_page += 1
 
     def write_schema(self) -> None:
         """
