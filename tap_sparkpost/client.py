@@ -74,9 +74,7 @@ class Client:
     def __init__(self, config: Mapping[str, Any]) -> None:
         self.config = config
         self._session = session()
-        self.base_url = config.get(
-            "base_url", "https://api.sparkpost.com/api/v1"
-        )
+        self.base_url = "https://api.sparkpost.com/api/v1"
         config_request_timeout = config.get("request_timeout")
         self.request_timeout = (
             float(config_request_timeout)
