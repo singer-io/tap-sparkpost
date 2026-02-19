@@ -82,17 +82,9 @@ class TestClientInitialization(unittest.TestCase):
         assert client.request_timeout == expected_value
         assert isinstance(client._session, mock_session().__class__)
 
-    def test_base_url_from_config(self):
-        """Test that base_url is read from config."""
-        config = default_config.copy()
-        config["base_url"] = "https://api.example.com/api/v1"
-        client = Client(config)
-        self.assertEqual(client.base_url, "https://api.example.com/api/v1")
-
     def test_base_url_default(self):
-        """Test that base_url defaults correctly."""
+        """Test that base_url is hardcoded to SparkPost API endpoint."""
         config = default_config.copy()
-        del config["base_url"]
         client = Client(config)
         self.assertEqual(client.base_url, "https://api.sparkpost.com/api/v1")
 
