@@ -19,6 +19,7 @@ from tap_sparkpost.exceptions import (
 
 LOGGER = get_logger()
 REQUEST_TIMEOUT = 300
+BASE_URL = "https://api.sparkpost.com/api/v1"
 
 def raise_for_error(response: requests.Response) -> None:
     """Raises the associated response exception. Takes in a response object,
@@ -74,7 +75,7 @@ class Client:
     def __init__(self, config: Mapping[str, Any]) -> None:
         self.config = config
         self._session = session()
-        self.base_url = "https://api.sparkpost.com/api/v1"
+        self.base_url = BASE_URL
         config_request_timeout = config.get("request_timeout")
         self.request_timeout = (
             float(config_request_timeout)

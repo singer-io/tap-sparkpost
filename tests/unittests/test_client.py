@@ -18,7 +18,6 @@ from tap_sparkpost.exceptions import (
 
 
 default_config = {
-    "base_url": "https://api.sparkpost.com/api/v1",
     "request_timeout": 30,
     "api_key": "test_api_key",
     "start_date": "2024-01-01T00:00:00Z"
