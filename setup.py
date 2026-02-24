@@ -14,6 +14,13 @@ setup(name="tap-sparkpost",
         "parameterized==0.9.0"
       ],
       extras_require={
+        "dev": [
+          "pytest",
+          "coverage",
+          "pylint",
+        ],
+      },
+      extras_require={
           "dev": [
               "pytest",
               "coverage",
