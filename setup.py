@@ -15,6 +15,13 @@ setup(name="tap-sparkpost",
         "backoff==2.2.1",
         "parameterized==0.9.0"
       ],
+      extras_require={
+          "dev": [
+              "pytest",
+              "coverage",
+              "pylint",
+          ],
+      },
       entry_points="""
           [console_scripts]
           tap-sparkpost=tap_sparkpost:main
