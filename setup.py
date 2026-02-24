@@ -20,13 +20,6 @@ setup(name="tap-sparkpost",
           "pylint",
         ],
       },
-      extras_require={
-          "dev": [
-              "pytest",
-              "coverage",
-              "pylint",
-          ],
-      },
       entry_points="""
           [console_scripts]
           tap-sparkpost=tap_sparkpost:main
