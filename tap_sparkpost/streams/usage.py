@@ -19,14 +19,14 @@ class Usage(FullTableStream):
             path=self.path
         )
 
-        # Usage endpoint returns nested structure: {results: {messaging: {day: {}, month: {}}}}
-        # We'll flatten and yield the usage data
+        # Usage endpoint returns: {results: {messaging: {day: {}, month: {}, timestamp: "..."},
+        #                                     recipient_validation: {...}}}
+        # Yield a flat record matching the schema with top-level messaging and recipient_validation.
         results = response.get(self.data_key, {})
         if results:
-            # Create a synthetic record with the usage data
             record = {
-                "timestamp": results.get("messaging", {}).get("day", {}).get("start"),
-                "usage_data": results
+                "timestamp": results.get("messaging", {}).get("timestamp"),
+                "messaging": results.get("messaging"),
+                "recipient_validation": results.get("recipient_validation"),
             }
-            if record["timestamp"]:
-                yield record
+            yield record

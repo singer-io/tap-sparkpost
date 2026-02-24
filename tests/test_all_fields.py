@@ -8,7 +8,7 @@ class SparkpostAllFields(AllFieldsTest, SparkpostBaseTest):
 
     MISSING_FIELDS = {
         "account": {"pending_cancellation", "pending_subscription", "usage", "support"},
-        "usage": {"messaging", "recipient_validation"},
+        "usage": set(),
         "templates": {"content", "last_use", "options"},
         "subaccounts": {"ip_pool"},
         "sending_domains": {"dkim", "delegated", "subaccount_id", "tracking_domain"},
