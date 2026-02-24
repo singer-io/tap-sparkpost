@@ -1,0 +1,59 @@
+{
+  "type": "object",
+  "properties": {
+    "domain": {
+      "type": "string"
+    },
+    "port": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "secure": {
+      "type": [
+        "null",
+        "boolean"
+      ]
+    },
+    "default": {
+      "type": [
+        "null",
+        "boolean"
+      ]
+    },
+    "status": {
+      "type": [
+        "null",
+        "object"
+      ],
+      "properties": {
+        "verified": {
+          "type": [
+            "null",
+            "boolean"
+          ]
+        },
+        "cname_status": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "compliance_status": {
+          "type": [
+            "null",
+            "string"
+          ]
+        }
+      }
+    },
+    "subaccount_id": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    }
+  },
+  "additionalProperties": false
+}

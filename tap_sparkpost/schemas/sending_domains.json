@@ -1,0 +1,152 @@
+{
+  "type": "object",
+  "properties": {
+    "domain": {
+      "type": "string"
+    },
+    "tracking_domain": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "status": {
+      "type": [
+        "null",
+        "object"
+      ],
+      "properties": {
+        "ownership_verified": {
+          "type": [
+            "null",
+            "boolean"
+          ]
+        },
+        "spf_status": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "abuse_at_status": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "dkim_status": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "cname_status": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "mx_status": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "compliance_status": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "postmaster_at_status": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "verification_mailbox_status": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "verification_mailbox": {
+          "type": [
+            "null",
+            "string"
+          ]
+        }
+      }
+    },
+    "dkim": {
+      "type": [
+        "null",
+        "object"
+      ],
+      "properties": {
+        "public": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "private": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "selector": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "signing_domain": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "headers": {
+          "type": [
+            "null",
+            "string"
+          ]
+        }
+      }
+    },
+    "shared_with_subaccounts": {
+      "type": [
+        "null",
+        "boolean"
+      ]
+    },
+    "subaccount_id": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "is_default_bounce_domain": {
+      "type": [
+        "null",
+        "boolean"
+      ]
+    },
+    "creation_time": {
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
+    },
+    "delegated": {
+      "type": [
+        "null",
+        "boolean"
+      ]
+    }
+  },
+  "additionalProperties": false
+}
