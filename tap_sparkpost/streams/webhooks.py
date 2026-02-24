@@ -7,5 +7,5 @@ class Webhooks(IncrementalStream):
     key_properties = ["id"]
     replication_method = "INCREMENTAL"
     replication_keys = ["last_successful"]
-    data_key = "results"
     path = "webhooks"
+    data_key = "results"
