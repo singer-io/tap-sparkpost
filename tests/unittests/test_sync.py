@@ -67,18 +67,14 @@ class TestSyncFlow(unittest.TestCase):
 
         self.assertEqual(mock_sync.call_count, 2)
 
-    @patch("singer.get_currently_syncing")
     @patch("singer.set_currently_syncing")
     @patch("singer.write_state")
-    def test_remove_currently_syncing(self, mock_write_state, mock_set_currently_syncing,
-                                     mock_get_currently_syncing):
+    def test_remove_currently_syncing(self, mock_write_state, mock_set_currently_syncing):
         """Test removing currently_syncing from state."""
-        mock_get_currently_syncing.return_value = "some_stream"
         state = {"currently_syncing": "some_stream"}
 
         update_currently_syncing(state, None)
 
-        mock_get_currently_syncing.assert_called_once_with(state)
         mock_set_currently_syncing.assert_not_called()
         mock_write_state.assert_called_once_with(state)
         self.assertNotIn("currently_syncing", state)
@@ -92,12 +88,17 @@ class TestSyncFlow(unittest.TestCase):
         mock_get_currently_syncing.return_value = None
         state = {}
 
+        def _set_currently_syncing_side_effect(state_obj, stream_name):
+            state_obj["currently_syncing"] = stream_name
+
+        mock_set_currently_syncing.side_effect = _set_currently_syncing_side_effect
+
         update_currently_syncing(state, "new_stream")
 
         mock_get_currently_syncing.assert_not_called()
         mock_set_currently_syncing.assert_called_once_with(state, "new_stream")
         mock_write_state.assert_called_once_with(state)
-        self.assertNotIn("currently_syncing", state)
+        self.assertEqual(state.get("currently_syncing"), "new_stream")
 
 
 class TestPrecisionParameter(unittest.TestCase):

@@ -13,8 +13,8 @@ def update_currently_syncing(state: Dict, stream_name: Optional[str]) -> None:
     """
     Update currently_syncing in state and write it
     """
-    if not stream_name and singer.get_currently_syncing(state):
-        del state["currently_syncing"]
+    if not stream_name:
+        state.pop("currently_syncing", None)
     else:
         singer.set_currently_syncing(state, stream_name)
     singer.write_state(state)

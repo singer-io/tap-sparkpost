@@ -55,8 +55,8 @@ def get_schemas() -> Tuple[Dict, Dict]:
         with open(schema_path, encoding='utf-8') as file:
             schema = json.load(file)
 
-        schemas[stream_name] = schema
         schema = singer.resolve_schema_references(schema, refs)
+        schemas[stream_name] = schema
 
         mdata = metadata.new()
         mdata = metadata.get_standard_metadata(
