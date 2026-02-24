@@ -19,6 +19,7 @@ from tap_sparkpost.exceptions import (
 
 LOGGER = get_logger()
 REQUEST_TIMEOUT = 300
+BASE_URL = "https://api.sparkpost.com/api/v1"
 
 def raise_for_error(response: requests.Response) -> None:
     """Raises the associated response exception. Takes in a response object,
@@ -74,9 +75,7 @@ class Client:
     def __init__(self, config: Mapping[str, Any]) -> None:
         self.config = config
         self._session = session()
-        self.base_url = config.get(
-            "base_url", "https://api.sparkpost.com/api/v1"
-        )
+        self.base_url = BASE_URL
         config_request_timeout = config.get("request_timeout")
         self.request_timeout = (
             float(config_request_timeout)
@@ -122,7 +121,7 @@ class Client:
         Sends an HTTP request to the specified API endpoint.
         
         Args:
-            method: HTTP method (GET, POST, PUT, DELETE)
+            method: HTTP method (GET, POST)
             endpoint: Full URL or path to API endpoint
             params: Query parameters
             headers: HTTP headers
@@ -167,4 +166,12 @@ class Client:
             else:
                 raise ValueError(f"Unsupported method: {method}")
 
-        return response.json()
+        # Handle responses with no content (e.g., HTTP 204) safely
+        if response.status_code == 204 or not response.content:
+            return {}
+
+        try:
+            return response.json()
+        except ValueError:
+            # Fallback for invalid or non-JSON responses on success codes
+            return {}

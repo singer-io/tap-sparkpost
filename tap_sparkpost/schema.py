@@ -55,8 +55,8 @@ def get_schemas() -> Tuple[Dict, Dict]:
         with open(schema_path, encoding='utf-8') as file:
             schema = json.load(file)
 
-        schemas[stream_name] = schema
         schema = singer.resolve_schema_references(schema, refs)
+        schemas[stream_name] = schema
 
         mdata = metadata.new()
         mdata = metadata.get_standard_metadata(
@@ -67,16 +67,7 @@ def get_schemas() -> Tuple[Dict, Dict]:
         )
         mdata = metadata.to_map(mdata)
 
-        # get_standard_metadata already sets:
-        #   - table-key-properties, forced-replication-method, valid-replication-keys
-        #   - inclusion: "available" at stream level
-        #   - inclusion: "automatic" for key_properties fields
-        # We add selected and mark replication key fields as automatic
-        # All replication keys and primary keys MUST be automatic per Singer spec
-        mdata = metadata.write(mdata, (), "selected", True)
-
         replication_keys = getattr(stream_obj, "replication_keys") or []
-
         for field_name in schema.get("properties", {}).keys():
             if field_name in replication_keys:
                 # Mark all replication keys as automatic (required by Singer spec)

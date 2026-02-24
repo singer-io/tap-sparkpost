@@ -266,8 +266,7 @@ class SparkpostBaseTest(BaseCase):
         """Configuration of properties required for the tap."""
         return_value = {
             "api_key": os.getenv('TAP_SPARKPOST_API_KEY'),
-            "start_date": "2022-07-01T00:00:00Z",
-            "base_url": os.getenv('TAP_SPARKPOST_BASE_URL', 'https://api.sparkpost.com/api/v1')
+            "start_date": "2022-07-01T00:00:00Z"
         }
         if original:
             return return_value

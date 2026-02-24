@@ -5,11 +5,19 @@ from unittest.mock import patch
 from parameterized import parameterized
 from requests.exceptions import Timeout, ConnectionError, ChunkedEncodingError
 from tap_sparkpost.client import Client
-from tap_sparkpost.exceptions import *
+from tap_sparkpost.exceptions import (
+    SparkPostBadRequestError,
+    SparkPostUnauthorizedError,
+    SparkPostForbiddenError,
+    SparkPostNotFoundError,
+    SparkPostBackoffError,
+    SparkPostInternalServerError,
+    SparkPostBadGatewayError,
+    SparkPostServiceUnavailableError
+)
 
 
 default_config = {
-    "base_url": "https://api.sparkpost.com/api/v1",
     "request_timeout": 30,
     "api_key": "test_api_key",
     "start_date": "2024-01-01T00:00:00Z"
@@ -73,17 +81,9 @@ class TestClientInitialization(unittest.TestCase):
         assert client.request_timeout == expected_value
         assert isinstance(client._session, mock_session().__class__)
 
-    def test_base_url_from_config(self):
-        """Test that base_url is read from config."""
-        config = default_config.copy()
-        config["base_url"] = "https://api.example.com/api/v1"
-        client = Client(config)
-        self.assertEqual(client.base_url, "https://api.example.com/api/v1")
-
     def test_base_url_default(self):
-        """Test that base_url defaults correctly."""
+        """Test that base_url is hardcoded to SparkPost API endpoint."""
         config = default_config.copy()
-        del config["base_url"]
         client = Client(config)
         self.assertEqual(client.base_url, "https://api.sparkpost.com/api/v1")
 

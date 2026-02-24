@@ -271,7 +271,6 @@ This tap:
 3. Create your tap's `config.json` file.  The tap config file for this tap should include these entries:
    - `api_key` (string, required): Your SparkPost API key
    - `start_date` (string, required): The default value to use if no bookmark exists for an endpoint (rfc3339 date string). Example: `"2019-01-01T00:00:00Z"`
-   - `base_url` (string, optional): The SparkPost API base URL. Defaults to `https://api.sparkpost.com/api/v1`
    - `request_timeout` (integer, optional): Max time in seconds for request to wait for response. Default: `300`
    - `precision` (string, optional): **Time-series metrics only**. Controls aggregation level for [metrics_time_series](https://developers.sparkpost.com/api/metrics/#metrics-get-time-series-metrics) endpoint. Default: `"day"`
 
@@ -300,7 +299,6 @@ This tap:
     {
         "api_key": "your_sparkpost_api_key_here",
         "start_date": "2019-01-01T00:00:00Z",
-        "base_url": "https://api.sparkpost.com/api/v1",
         "request_timeout": 300,
         "precision": "day"
     }

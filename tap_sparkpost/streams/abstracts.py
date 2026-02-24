@@ -229,7 +229,8 @@ class IncrementalStream(BaseStream):
         current_max_bookmark_date = bookmark_date
         # SparkPost API uses 'from' and 'to' parameters for date filtering
         # Format: YYYY-MM-DDTHH:MM:ssZ (UTC)
-        self.update_params(from_date=bookmark_date)
+        # Use dict expansion since 'from' is a Python keyword
+        self.update_params(**{"from": bookmark_date})
         self.update_data_payload(parent_obj=parent_obj)
         self.url_endpoint = self.get_url_endpoint(parent_obj)
 

@@ -11,8 +11,7 @@ class TestPaginationFlow(unittest.TestCase):
         """Set up test stream."""
         config = {
             "api_key": "test_key",
-            "start_date": "2024-01-01T00:00:00Z",
-            "base_url": "https://api.sparkpost.com/api/v1"
+            "start_date": "2024-01-01T00:00:00Z"
         }
         client = MagicMock()
         client.config = config
