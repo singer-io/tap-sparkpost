@@ -107,7 +107,7 @@ class Client:
 
         return headers, params
 
-    # pylint: disable=too-many-arguments
+    # pylint: disable=too-many-arguments,too-many-positional-arguments
     def make_request(
         self,
         method: str,
