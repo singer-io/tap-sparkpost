@@ -1,0 +1,176 @@
+{
+  "type": "object",
+  "properties": {
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "recipient_validation": {
+      "type": [
+        "null",
+        "object"
+      ],
+      "properties": {
+        "day": {
+          "type": [
+            "null",
+            "object"
+          ],
+          "properties": {
+            "used": {
+              "type": [
+                "null",
+                "integer"
+              ]
+            },
+            "limit": {
+              "type": [
+                "null",
+                "integer"
+              ]
+            },
+            "start": {
+              "type": [
+                "null",
+                "string"
+              ],
+              "format": "date-time"
+            },
+            "end": {
+              "type": [
+                "null",
+                "string"
+              ],
+              "format": "date-time"
+            }
+          }
+        },
+        "month": {
+          "type": [
+            "null",
+            "object"
+          ],
+          "properties": {
+            "used": {
+              "type": [
+                "null",
+                "integer"
+              ]
+            },
+            "limit": {
+              "type": [
+                "null",
+                "integer"
+              ]
+            },
+            "start": {
+              "type": [
+                "null",
+                "string"
+              ],
+              "format": "date-time"
+            },
+            "end": {
+              "type": [
+                "null",
+                "string"
+              ],
+              "format": "date-time"
+            }
+          }
+        },
+        "last_usage_date": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "format": "date-time"
+        }
+      }
+    },
+    "messaging": {
+      "type": [
+        "null",
+        "object"
+      ],
+      "properties": {
+        "day": {
+          "type": [
+            "null",
+            "object"
+          ],
+          "properties": {
+            "used": {
+              "type": [
+                "null",
+                "integer"
+              ]
+            },
+            "limit": {
+              "type": [
+                "null",
+                "integer"
+              ]
+            },
+            "start": {
+              "type": [
+                "null",
+                "string"
+              ],
+              "format": "date-time"
+            },
+            "end": {
+              "type": [
+                "null",
+                "string"
+              ],
+              "format": "date-time"
+            }
+          }
+        },
+        "month": {
+          "type": [
+            "null",
+            "object"
+          ],
+          "properties": {
+            "used": {
+              "type": [
+                "null",
+                "integer"
+              ]
+            },
+            "limit": {
+              "type": [
+                "null",
+                "integer"
+              ]
+            },
+            "start": {
+              "type": [
+                "null",
+                "string"
+              ],
+              "format": "date-time"
+            },
+            "end": {
+              "type": [
+                "null",
+                "string"
+              ],
+              "format": "date-time"
+            }
+          }
+        },
+        "last_usage_date": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "format": "date-time"
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

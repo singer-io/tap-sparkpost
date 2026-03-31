@@ -1,0 +1,68 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "name": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "signing_domain": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "fbl_signing_domain": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "ips": {
+      "type": [
+        "null",
+        "array"
+      ],
+      "items": {
+        "type": ["null", "object"],
+        "properties": {
+          "external_ip": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "hostname": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "auto_warmup_enabled": {
+            "type": [
+              "null",
+              "boolean"
+            ]
+          },
+          "auto_warmup_stage": {
+            "type": [
+              "null",
+              "integer"
+            ]
+          }
+        }
+      }
+    },
+    "auto_warmup_overflow_pool": {
+      "type": [
+        "null",
+        "string"
+      ]
+    }
+  },
+  "additionalProperties": false
+}

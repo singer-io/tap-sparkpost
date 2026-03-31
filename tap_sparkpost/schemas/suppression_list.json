@@ -1,0 +1,65 @@
+{
+  "type": "object",
+  "properties": {
+    "recipient": {
+      "type": "string"
+    },
+    "type": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "source": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "description": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "list_id": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "created": {
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
+    },
+    "updated": {
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
+    },
+    "transactional": {
+      "type": [
+        "null",
+        "boolean"
+      ]
+    },
+    "non_transactional": {
+      "type": [
+        "null",
+        "boolean"
+      ]
+    },
+    "subaccount_id": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    }
+  },
+  "additionalProperties": false
+}
